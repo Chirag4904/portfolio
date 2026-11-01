@@ -44,7 +44,7 @@ All meaningful text and navigation are rendered into HTML. JavaScript progressiv
 
 The résumé does not give names or distance thresholds for the four LetzGo tiers. The route scene explicitly identifies itself as conceptual and avoids inventing them. Reported load-test results are qualified rather than presented as universal production guarantees. Popin events are clearly illustrative. EZ-Allocate individual feature ownership is unconfirmed and is described as team work. Confirmed personal contributions can be added later.
 
-The site preserves Vercel Web Analytics and has no remote font requests, live map API, contact-form backend, or runtime JavaScript dependencies. A compact, locally hosted Caveat font supplies handwritten annotations; its SIL Open Font License is included in `assets/Caveat-OFL.txt`. Contact uses email and verified résumé social links.
+The site preserves Vercel Web Analytics and has no remote font requests, live map API or runtime JavaScript dependencies. A compact, locally hosted Caveat font supplies handwritten annotations; its SIL Open Font License is included in `assets/Caveat-OFL.txt`. Contact uses email and verified résumé social links.
 
 ## Verification
 
@@ -59,3 +59,7 @@ The ranking is an educational distance-to-route sketch, not LetzGo’s productio
 Sketchbook audio is temporarily disabled. Its source and commented integration points are retained for later.
 
 `node scripts/playground-check.mjs` uses the same optional Playwright/Chrome environment variables as the main browser check. It covers mouse and touch dragging, placement, keyboard movement/removal, reset, limits, cancellation, and confirms the site does not create an audio context.
+
+## Private notes
+
+The contact form sends messages to the portfolio email through FormSubmit, with its default spam protection. The first submission triggers a confirmation email; open its activation link before relying on the form. Visitor name and reply email are optional. Successful submissions return to `/thank-you/`. The existing email link remains available.

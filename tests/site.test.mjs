@@ -71,3 +71,14 @@ test('résumé is readable without an embedded viewer and retains the original P
   assert.doesNotMatch(html,/<object/);
   assert.match(html,/href="\/assets\/chirag-aggarwal-resume\.pdf" download=/);
 });
+
+
+test('private note form is available with a required message and valid destination',()=>{
+  for(const page of ['index.html','resume/index.html']) {
+    const html=pages.get(page)();
+    assert.match(html,/action="https:\/\/formsubmit\.co\/aggarwalchirag4904@gmail\.com" method="post"/);
+    assert.match(html,/<textarea[^>]*name="message"[^>]*required/);
+    assert.match(html,/https:\/\/chiragaggarwal\.cloud\/thank-you\//);
+  }
+  assert.ok(pages.has('thank-you/index.html'));
+});
