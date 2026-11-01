@@ -1,7 +1,39 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "",
+  "buildCommand": "npm run build",
   "installCommand": "",
-  "cleanUrls": false
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/letzgo.html",
+      "destination": "/projects/letzgo/",
+      "permanent": true
+    },
+    {
+      "source": "/popin.html",
+      "destination": "/projects/popin/",
+      "permanent": true
+    },
+    {
+      "source": "/ez-allocate.html",
+      "destination": "/projects/ez-allocate/",
+      "permanent": true
+    },
+    {
+      "source": "/resume.pdf",
+      "destination": "/assets/chirag-aggarwal-resume.pdf",
+      "permanent": true
+    },
+    {
+      "source": "/assets/hackathon-award.png",
+      "destination": "/assets/hackathon-award.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/assets/hackathon-group.png",
+      "destination": "/assets/hackathon-teams.jpg",
+      "permanent": true
+    }
+  ]
 }

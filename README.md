@@ -1,28 +1,61 @@
-# Chirag Aggarwal — Portfolio
+# Chirag Aggarwal — Inside the systems
 
-Live website: https://chiragaggarwal.cloud
+A personal, monochrome journey through Chirag’s motivation and work. The opening introduces him by name; a native-scroll sequence unfolds a product into experience, logic, and delivery, then brings it back together. Two featured projects, a quieter EZ-Allocate case study, professional experience, a large award-photo slideshow, contact links, and the original résumé complete the story.
 
-Plain HTML, CSS, and JavaScript; no framework, dependency installation, or build step.
+## Run locally
 
-## Pages
+Requires Node.js 20 or later. No package installation or production dependencies.
 
-- `index.html`: homepage, experience, recognition, and contact details.
-- `letzgo.html`: LetzGo (2025).
-- `popin.html`: Popin (July 2025–February 2026).
-- `ez-allocate.html`: EZ-Allocate (2023).
+```sh
+npm run dev
+```
 
-## Local preview
+Open http://127.0.0.1:4173. The command builds the site and serves it locally. After source edits, run `npm run build` in another terminal and refresh the browser. `PORT=5000 npm run dev` selects another port.
 
-Run `python3 -m http.server 8000` from this directory and open http://localhost:8000.
+```sh
+npm run build
+npm test
+```
 
-## Assets pending approval
+`dist/` is the deployable static output. No deployment or push has been performed. A future host should serve directory `index.html` files and use `404.html` for missing routes. Canonical URLs and the sitemap use https://chiragaggarwal.cloud.
 
-This source upload excludes `resume.pdf`, `assets/hackathon-award.png`, and `assets/hackathon-group.png` pending explicit approval to publish them in this public repository. The HTML references are retained, but those downloads/images will be unavailable in a checkout until the assets are added. The existing live Vercel deployment includes them and is unchanged.
+## Edit
 
-## Vercel
+- `src/pages.mjs`: copy, shared navigation/footer, and page composition.
+- `src/journey.mjs`: personal opening, three-part narrative, and layered product illustration.
+- `src/scenes.mjs`: accessible project SVG illustrations and delivery-stage explanations.
+- `src/experience.css`: cinematic homepage compositions and responsive narrative layouts.
+- `src/styles.css`: responsive design, typography, print styles, and motion preferences.
+- `src/client.js`: pointer/keyboard controls, scene timers, slideshow, and motion state.
+- `src/match-demo.js` and `src/matching.js`: passenger placement, drag/keyboard handling, and the illustrative geometric ranking.
+- `src/sketch-audio.js`: temporarily disabled sketchbook audio, retained for later use.
+- `assets/`: résumé, favicon, and compressed versions of the supplied photos.
 
-`vercel.json` configures this as a static site. The existing project is `chirag-portfolio`. GitHub auto-deployment has not been connected. Add the pending assets before deploying this checkout or connecting it to production.
+All meaningful text and navigation are rendered into HTML. JavaScript progressively enhances the scenes. Native scrolling remains intact. Continuous loops pause offscreen, in hidden tabs, and when motion is disabled. System reduced-motion preferences take precedence over the saved motion setting. Keyboard focus pauses automatic stage changes while visitors inspect controls. The personal narrative uses native scrolling and optional chapter buttons. Paused motion, reduced motion, short screens, and no-JavaScript mode expose the whole narrative as ordinary readable content.
 
-## Analytics
+## Content sources and open details
 
-Every HTML page includes Vercel Web Analytics. The `/_vercel/insights/script.js` endpoint is provided by Vercel; it will not exist on the basic local server.
+- `chirag_resume.pdf` supplied by the user: professional roles, skills, project contributions, and reported metrics. The original file is served without modifications.
+- User brief: project dates, domain, award/team context, and creative direction.
+- The supplied EZ-Allocate write-up: team project architecture, allocation constraints, and asynchronous exports. The public repository README was also checked.
+- Supplied award photos: displayed only in the homepage slideshow. Original attachments are unchanged; web copies are JPEGs.
+- User clarification: LetzGo and Popin use the résumé as their source of truth; EZ-Allocate is not a featured visual project.
+- User’s personal motivation: admiration for engineers and a wish to make something with real-world impact that people actually use. This now anchors the opening and About section.
+
+The résumé does not give names or distance thresholds for the four LetzGo tiers. The route scene explicitly identifies itself as conceptual and avoids inventing them. Reported load-test results are qualified rather than presented as universal production guarantees. Popin events are clearly illustrative. EZ-Allocate individual feature ownership is unconfirmed and is described as team work. Confirmed personal contributions can be added later.
+
+The site preserves Vercel Web Analytics and has no remote font requests, live map API, contact-form backend, or runtime JavaScript dependencies. A compact, locally hosted Caveat font supplies handwritten annotations; its SIL Open Font License is included in `assets/Caveat-OFL.txt`. Contact uses email and verified résumé social links.
+
+## Verification
+
+`npm test` checks generated-page structure, every local link and anchor, résumé serving, real 404s, and preview-server path validation. Browser QA covers desktop/mobile layout and interactive behavior; see `VERIFICATION.md` for the completed checks and limits.
+
+## Try the sketchbook interactions
+
+On the homepage or LetzGo case study, drag the numbered passenger pins to see the pickup ranking change. `+ Passenger` lets mouse/touch visitors place a pickup on the map; keyboard activation adds a focused pin. Arrow keys move a pin, Shift makes larger steps, Delete removes it, and Escape cancels a drag or placement. Up to five passengers can be placed; Reset restores the original three. All passengers share destination B.
+
+The ranking is an educational distance-to-route sketch, not LetzGo’s production matching algorithm. It projects pickups onto sampled segments of the drawn route and sorts by shortest straight-line distance, with passenger ID breaking ties. It does not calculate road-network detours, direction, or travel time.
+
+Sketchbook audio is temporarily disabled. Its source and commented integration points are retained for later.
+
+`node scripts/playground-check.mjs` uses the same optional Playwright/Chrome environment variables as the main browser check. It covers mouse and touch dragging, placement, keyboard movement/removal, reset, limits, cancellation, and confirms the site does not create an audio context.
