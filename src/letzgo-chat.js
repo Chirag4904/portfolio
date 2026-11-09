@@ -54,3 +54,4 @@ form.addEventListener('submit', async (event) => {
     field.readOnly = false;
   }
 });
+form.hidden = false;

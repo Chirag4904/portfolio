@@ -48,7 +48,7 @@ const letzgo=()=>layout({title:'LetzGo — Chirag Aggarwal',description:'Inside 
  ${chapter('05','Ask about<br>LetzGo.',`<div class="letzgo-chat">
   <p>Curious about the matching algorithm, the queues, or the way rides stay coordinated? Ask the AI assistant a question about the engineering case study.</p>
   <div id="letzgo-chat-transcript" role="log" aria-label="LetzGo questions and answers"></div>
-  <form id="letzgo-chat-form" class="note-form" method="post" action="/api/chat">
+  <form id="letzgo-chat-form" class="note-form" method="post" action="/api/chat" hidden>
     <label for="letzgo-question">Your question</label>
     <input id="letzgo-question" name="question" type="text" maxlength="600" placeholder="Why are only six stop orders valid?" required>
     <div class="note-form-footer"><p id="letzgo-chat-status" role="status"></p><button type="submit">Ask LetzGo <span aria-hidden="true">↗</span></button></div>

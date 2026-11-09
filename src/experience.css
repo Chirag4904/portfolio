@@ -41,4 +41,4 @@
 .letzgo-chat .note-form{margin-top:1.5rem}
 .letzgo-chat button:disabled{opacity:.65;cursor:wait}
 .letzgo-chat noscript{display:block;margin-top:1rem}
-html:not(.js) .letzgo-chat form{display:none}
+.letzgo-chat form[hidden]{display:none}
