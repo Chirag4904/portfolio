@@ -10,6 +10,8 @@ const thread = find('[data-guide-thread]');
 const turns = find('[data-guide-turns]');
 const welcome = find('[data-guide-welcome]');
 const starters = find('[data-guide-starters]');
+const tech = find('[data-guide-tech]');
+const techItems = find('[data-guide-tech-items]');
 const form = find('[data-guide-form]');
 const field = form.elements.question;
 const send = form.querySelector('button');
@@ -17,9 +19,9 @@ const status = find('[data-guide-status]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const topics = {
   site: { label: '00 / OVERVIEW', heading: 'There’s a story behind every build.', description: 'Ask about the projects, the portfolio, or Chirag’s work.', placeholder: 'Ask about the portfolio…', prompts: ['What projects has Chirag built?', 'What does Chirag work on at HERE?', 'What award did Chirag’s hackathon team receive?'] },
-  letzgo: { label: '01 / LETZGO', heading: 'A shared ride, engineered.', description: 'Explore the route decisions, real-time GPS, and the backend behind a trip.', placeholder: 'Ask about LetzGo…', prompts: ['Why are there only six valid stop orders?', 'How did LetzGo handle live GPS?'] },
-  popin: { label: '02 / POPIN', heading: 'A city, one viewport at a time.', description: 'Explore the event map, organizer tools, and the delivery pipeline.', placeholder: 'Ask about Popin…', prompts: ['How does Popin search the map?', 'How did Popin keep Flutter golden tests consistent?'] },
-  resume: { label: '03 / RÉSUMÉ', heading: 'A closer look at the experience.', description: 'Explore roles, project contributions, education, and the latest skills.', placeholder: 'Ask about the résumé…', prompts: ['What skills are on Chirag’s résumé?', 'What did Chirag study?'] },
+  letzgo: { name: 'LetzGo', label: '01 / LETZGO', heading: 'A shared ride, engineered.', description: 'Explore the route decisions, real-time GPS, and the backend behind a trip.', placeholder: 'Ask about LetzGo…', prompts: ['Why are there only six valid stop orders?', 'How did LetzGo handle live GPS?'], technologies: ['Redis', 'BullMQ', 'Socket.IO', 'PostgreSQL', 'Stripe Connect'] },
+  popin: { name: 'Popin', label: '02 / POPIN', heading: 'A city, one viewport at a time.', description: 'Explore the event map, organizer tools, and the delivery pipeline.', placeholder: 'Ask about Popin…', prompts: ['How does Popin search the map?', 'How did Popin keep Flutter golden tests consistent?'], technologies: ['Flutter', 'TypeScript', 'React', 'BullMQ', 'OpenTelemetry'] },
+  resume: { label: '03 / RESUME', heading: 'A closer look at the experience.', description: 'Explore roles, project contributions, education, and the latest skills.', placeholder: 'Ask about the resume…', prompts: ['What skills are on Chirag’s resume?', 'What did Chirag study?'] },
 };
 const history = [];
 const seen = new Set();
@@ -106,6 +108,15 @@ function selectTopic(key) {
     button.addEventListener('click', () => ask(question));
     starters.append(button);
   }
+  tech.hidden = !topic.technologies;
+  techItems.replaceChildren();
+  for (const name of topic.technologies ?? []) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = name;
+    button.addEventListener('click', () => ask(`How was ${name} used in ${topic.name}?`, ''));
+    techItems.append(button);
+  }
 }
 
 function appendTurn(question) {
@@ -155,7 +166,7 @@ function setStatus(text) {
   status.hidden = !text;
 }
 
-async function ask(question) {
+async function ask(question, prior = previous) {
   if (!question || request) return;
   const controller = new AbortController();
   request = controller;
@@ -174,7 +185,7 @@ async function ask(question) {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/x-ndjson' },
-      body: JSON.stringify({ question, previous, topic }),
+      body: JSON.stringify({ question, previous: prior, topic }),
       signal: controller.signal,
     });
     if (!response.ok || !response.body) {

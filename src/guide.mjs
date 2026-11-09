@@ -23,10 +23,14 @@ export const guide = `<aside class="field-guide" data-field-guide hidden aria-la
         <button type="button" data-guide-topic="site" aria-pressed="true"><span aria-hidden="true">00</span> Explore</button>
         <button type="button" data-guide-topic="letzgo" aria-pressed="false"><span aria-hidden="true">01</span> LetzGo</button>
         <button type="button" data-guide-topic="popin" aria-pressed="false"><span aria-hidden="true">02</span> Popin</button>
-        <button type="button" data-guide-topic="resume" aria-pressed="false"><span aria-hidden="true">03</span> Résumé</button>
+        <button type="button" data-guide-topic="resume" aria-pressed="false"><span aria-hidden="true">03</span> Resume</button>
         <div class="guide-rail-caption"><span aria-hidden="true"></span><p>AI guide<br>Project notes &amp; portfolio</p></div>
       </nav>
       <div class="guide-reading">
+        <section class="guide-tech" data-guide-tech aria-label="Project technologies" hidden>
+          <p class="mono">TECH STACK</p>
+          <div data-guide-tech-items></div>
+        </section>
         <div class="guide-conversation" data-guide-thread aria-label="Conversation">
           <div class="guide-welcome" data-guide-welcome>
             <p class="mono guide-file-label" data-guide-topic-label>00 / OVERVIEW</p>

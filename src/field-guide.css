@@ -38,7 +38,13 @@
 .guide-topics button[aria-pressed=true] span{color:#405130}
 .guide-rail-caption{display:flex;align-items:start;gap:6px;padding:0 6px;color:#c3d0bb;margin-top:auto;font-size:10px;line-height:1.45}
 .guide-rail-caption span{width:5px;height:5px;flex:none;margin-top:4px;border-radius:50%;background:var(--guide-accent)}
-.guide-reading{display:grid;grid-template-rows:minmax(0,1fr) auto;min-width:0;min-height:0}
+.guide-reading{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0}
+.guide-tech{grid-row:1;padding:8px 14px 10px;background:#eff2e8;border-bottom:1px solid var(--guide-line)}
+.guide-tech>.mono{color:var(--guide-muted);font-size:10px;letter-spacing:.1em;margin-bottom:4px}
+.guide-tech>div{display:flex;flex-wrap:wrap;gap:5px}
+.guide-tech button{min-height:36px;padding:4px 8px;border:1px solid #cbd6bb;border-radius:4px;background:#f8faf2;color:#35472d;font-size:12px;font-weight:620}
+.guide-conversation{grid-row:2}
+.guide-compose{grid-row:3}
 .guide-conversation{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;background:var(--guide-paper)}
 .guide-welcome{padding:26px 26px 20px}
 .guide-file-label{width:max-content;padding:4px 7px;border:1px solid #d5dec9;color:#475741;background:#eff2e6}
@@ -65,7 +71,8 @@
 .guide-input-row input{min-width:0;flex:1;min-height:40px;padding:7px 3px;border:0;background:transparent;color:var(--guide-ink);font:16px/1.35 system-ui,sans-serif}
 .guide-input-row input:focus-visible{outline:none}
 .guide-send{min-width:44px;min-height:44px;border:0;border-radius:3px;background:var(--guide-dark);color:var(--guide-accent);font-size:22px!important}
-@media(hover:hover) and (pointer:fine){.guide-starters button:hover,.guide-note-head button:hover{background:#ebefe3}.guide-close:hover,.guide-launch:hover,.guide-send:hover,.guide-topics button:not([aria-pressed=true]):hover{background:#384433}}
+@media(hover:hover) and (pointer:fine){.guide-starters button:hover,.guide-note-head button:hover{background:#ebefe3}.guide-close:hover,.guide-launch:hover,.guide-send:hover,.guide-topics button:not([aria-pressed=true]):hover{background:#384433}.guide-tech button:hover{background:#e0edc6;border-color:#a3bc79}}
+@media(pointer:coarse){.guide-tech button{min-height:44px}}
 @media(max-width:560px){
   .field-guide{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}
   .guide-panel{inset:auto max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));width:auto;height:min(590px,calc(100dvh - 16px));border-radius:8px}
