@@ -1,4 +1,4 @@
-const bird = `<svg viewBox="0 0 64 54" fill="none" aria-hidden="true"><path d="M13 48h36" stroke="currentColor" stroke-opacity=".22" stroke-width="1.3" stroke-linecap="round"/><path d="m23 41-2 6h-5m19-6 2 6h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 34 4 25l16 2c5-10 10-15 18-16 8-1 13 4 14 10l8 4-8 3c-1 9-9 15-22 15-8 0-13-3-16-9Z" fill="var(--bird-fill,#eed29b)" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m20 28 18 1-10 10-8-11Z" fill="var(--bird-wing,#d8a95e)" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="m32 13 1-6 5 4m-1 1 4-6 2 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="45" cy="20" r="1.8" fill="currentColor"/></svg>`;
+const bird = `<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 26 18 27 26 12a8 8 0 0 1 14 4l5 3-5 2c0 11-8 16-18 16-8 0-13-4-17-11Z" fill="var(--bird-fill,#9cb0ff)"/><path d="m17 27 15-5-5 12-10-7Z" fill="var(--bird-wing,#5865e7)"/><path d="M24 38v3m8-4v4" stroke="var(--bird-fill,#9cb0ff)" stroke-width="2" stroke-linecap="round"/><circle cx="35.5" cy="15.5" r="1.6" fill="#20244c"/><path d="M7 21h8m-5-5h5" stroke="var(--bird-fill,#9cb0ff)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/></svg>`;
 
 export const guide = `<aside class="field-guide" data-field-guide hidden aria-label="Portfolio field guide">
   <div class="guide-visitor" data-guide-visitor hidden>
@@ -14,15 +14,15 @@ export const guide = `<aside class="field-guide" data-field-guide hidden aria-la
   </button>
   <dialog id="portfolio-guide" class="guide-panel" aria-labelledby="portfolio-guide-title">
     <header class="guide-panel-head">
-      <div class="guide-panel-brand"><span class="guide-brand-mark">${bird}</span><div><p class="mono guide-kicker">CHIRAG’S PORTFOLIO</p><h2 id="portfolio-guide-title">Field guide<span>.</span></h2></div></div>
+      <div class="guide-panel-brand"><span class="guide-brand-mark">${bird}</span><div><h2 id="portfolio-guide-title">Portfolio guide</h2><p class="guide-kicker"><span aria-hidden="true"></span> AI assistant</p></div></div>
       <button type="button" class="guide-close" data-guide-close aria-label="Close field guide">×</button>
     </header>
     <div class="guide-conversation" data-guide-thread aria-label="Conversation">
       <div class="guide-welcome" data-guide-welcome>
-        <div class="guide-welcome-art" aria-hidden="true"><span></span><div>${bird}</div><span></span></div>
-        <p class="mono guide-kicker">A SMALL GUIDE TO THE WORK</p>
-        <h3>Curious about<br>something?</h3>
-        <p>Ask about a project, an engineering decision, or Chirag’s work.</p>
+        <span class="guide-welcome-mark">${bird}</span>
+        <h3>Explore the work.</h3>
+        <p>Ask about LetzGo, Popin, or Chirag’s experience.</p>
+        <p class="guide-suggestions-label">Suggested questions</p>
         <div class="guide-starters" data-guide-starters aria-label="Suggested questions"></div>
       </div>
       <div class="guide-turns" data-guide-turns></div>
@@ -30,7 +30,7 @@ export const guide = `<aside class="field-guide" data-field-guide hidden aria-la
     <form class="guide-compose" data-guide-form>
       <p class="guide-status mono" data-guide-status role="status" hidden></p>
       <div class="guide-input-row"><label class="sr-only" for="portfolio-guide-input">Your question</label><input id="portfolio-guide-input" name="question" type="text" maxlength="600" placeholder="Ask a question…" autocomplete="off" required><button type="submit" class="guide-send" aria-label="Send question">↑</button></div>
-      <p class="guide-disclosure">AI guide · Based on portfolio and case study notes</p>
+      <p class="guide-disclosure">Answers from case studies and the latest résumé</p>
     </form>
   </dialog>
 </aside>`;

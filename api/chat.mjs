@@ -45,7 +45,8 @@ export async function POST(request) {
   }
 
   try {
-    const matches = await postJson(new URL('/query-data/letzgo', indexUrl), indexToken, {
+    const namespace = streaming ? 'field-guide' : 'letzgo';
+    const matches = await postJson(new URL('/query-data/' + namespace, indexUrl), indexToken, {
       data: previous ? `${question}\nPrevious question: ${previous}` : question,
       topK: 3,
       includeData: true,
@@ -100,7 +101,22 @@ async function postJson(url, token, body) {
 const streamHeaders = { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-store' };
 
 function passageSource({ metadata }) {
-  const { anchor, title } = metadata;
+  const { anchor, title, document } = metadata;
+  if (document === 'resume') {
+    const sections = { profile: 'Profile', experience: 'Experience', projects: 'Projects', skills: 'Technical skills', education: 'Education' };
+    return Object.hasOwn(sections, anchor) ? { title: 'Résumé · ' + sections[anchor], href: '/resume/#' + anchor } : null;
+  }
+  if (document === 'popin') {
+    if (/Geospatial Query Bottlenecks|Fragmented & Static Event Discovery|Consumer Mobile Experience/.test(title)) {
+      return { title: 'Popin · Map discovery', href: '/projects/popin/#discovery' };
+    }
+    if (/Enterprise-Grade CI\/CD|Automated Play Store Distribution/.test(title)) {
+      return { title: 'Popin · Delivery pipeline', href: '/projects/popin/#delivery' };
+    }
+    if (/Distributed Observability/.test(title)) return { title: 'Popin · Observability', href: '/projects/popin/#observability' };
+    if (/Executive Summary/.test(title)) return { title: 'Popin · Project overview', href: '/projects/popin/#main' };
+    return null;
+  }
   if (anchor === 'routing') return { title: 'LetzGo · Pickup before drop-off', href: '/projects/letzgo/#routing' };
   if (anchor === 'matching') return { title: 'LetzGo · Route filtering', href: '/projects/letzgo/#matching' };
   if ((anchor === 'architecture' && /^3\.5\./.test(title)) || /^3\.[78]\./.test(title)) {

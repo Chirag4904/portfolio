@@ -77,15 +77,15 @@ function openGuide(trigger) {
 }
 
 function renderSuggestions() {
-  const choices = new Set([selectNote(), notes[0], notes[2], notes[3]]);
-  for (const note of Array.from(choices).slice(0, 2)) {
+  const choices = new Set([selectNote().question, notes[2].question, 'What skills are on Chirag’s résumé?', notes[0].question]);
+  for (const question of Array.from(choices).slice(0, 3)) {
     const button = document.createElement('button');
     button.type = 'button';
     const arrow = document.createElement('span');
     arrow.setAttribute('aria-hidden', 'true');
     arrow.textContent = '↗';
-    button.append(note.question, arrow);
-    button.addEventListener('click', () => ask(note.question));
+    button.append(question, arrow);
+    button.addEventListener('click', () => ask(question));
     starters.append(button);
   }
 }

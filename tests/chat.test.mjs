@@ -45,15 +45,17 @@ test('retrieves passages and returns a grounded answer with case study links', a
 
 test('streams reply fragments and at most one matching site section', async t => {
   const fetchMock = t.mock.method(globalThis, 'fetch', async (url, options) => {
-    if (String(url).endsWith('/query-data/letzgo')) {
+    if (String(url).endsWith('/query-data/field-guide')) {
       return Response.json({ result: [
         { data: 'Six orders satisfy the pickup constraint.', metadata: { title: 'Precedence Constraints & Permutations', anchor: 'routing' } },
         { data: 'Progressive pricing brackets.', metadata: { title: '3.4. Dynamic Bracketed Commute Pricing Model', anchor: 'reliability' } },
+        { data: 'Java, Kafka and MCP.', metadata: { title: 'TECHNICAL SKILLS', anchor: 'skills', document: 'resume' } },
       ] });
     }
     const body = JSON.parse(options.body);
     assert.equal(body.stream, true);
     assert.equal(JSON.parse(body.messages[1].content).notes[1].source, null);
+    assert.equal(JSON.parse(body.messages[1].content).notes[2].source, 3);
     const upstream = ['SOUR', 'CE 1\nSix', ' orders.'].map(content =>
       'data: ' + JSON.stringify({ choices: [{ delta: { content } }] }) + '\r\n\r\n'
     ).join('') + 'data: [DONE]\r\n\r\n';

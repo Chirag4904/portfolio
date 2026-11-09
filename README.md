@@ -66,6 +66,6 @@ The contact form sends messages to the portfolio email through FormSubmit, with 
 
 ## Portfolio field guide
 
-The sitewide guide sends questions to `/api/chat`. Vercel needs `UPSTASH_VECTOR_REST_URL`, `UPSTASH_VECTOR_REST_TOKEN` (read-only), `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN`. The function searches the `letzgo` namespace and uses Gemma 4 to stream answers from the retrieved passages and public portfolio details.
+The sitewide guide sends questions to `/api/chat`. Vercel needs `UPSTASH_VECTOR_REST_URL`, `UPSTASH_VECTOR_REST_TOKEN` (read-only), `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN`. The function uses Gemma 4 to stream answers from the `field-guide` namespace. The original JSON endpoint continues to read the `letzgo` namespace.
 
-Keep the original case study in the Git-ignored `rag/sources/` directory. Run `node rag/chunk.mjs rag/sources/letzgo.md` to generate the request body for Upstash's `/upsert-data/letzgo` endpoint. After reindexing a shorter document, remove leftover `letzgo-doc-*` IDs beyond the new chunk count.
+Keep the case studies and the résumé text in the Git-ignored `rag/sources/` directory. Generate the Upstash request body with `node rag/chunk.mjs rag/sources/popin.md popin`. Use `letzgo`, `popin`, or `resume` to select the document and upload its generated chunks to `/upsert-data/field-guide`. After verifying a replacement, remove leftover IDs for that document beyond its new chunk count. The résumé text starts at its Summary section so contact details stay out of retrieval.
