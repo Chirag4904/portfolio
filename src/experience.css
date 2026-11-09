@@ -32,3 +32,13 @@
 /* A quiet, readable place to leave a private note. */
 .note-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:12%;border-top:1px solid var(--rule);padding:55px 0 70px}.note-intro .hand{display:block;transform:rotate(-4deg);margin-bottom:27px;font-size:27px}.note-intro h3{font-size:35px}.note-intro p{font-size:14px;color:var(--muted);max-width:300px;margin-top:20px}.note-form{display:flex;flex-direction:column}.note-form label{font:11px/1.5 'Courier New',monospace;margin-bottom:7px}.note-form label span{color:var(--muted);font-size:10px}.note-form input:not([type=hidden]),.note-form textarea{width:100%;font:15px/1.5 Arial,Helvetica,sans-serif;color:var(--ink);background:transparent;border:0;border-bottom:1px solid #a5a79b;border-radius:0;padding:11px 0 14px;margin-bottom:23px}.note-form input::placeholder,.note-form textarea::placeholder{color:#78796f;opacity:1}.note-form textarea{resize:vertical;min-height:110px}.note-form input:focus-visible,.note-form textarea:focus-visible{outline:2px solid var(--ink);outline-offset:4px}.note-form-footer{display:flex;align-items:center;justify-content:space-between;gap:24px}.note-form-footer p{font-size:11px;color:var(--muted);max-width:250px;margin:0}.note-form-footer p a{text-decoration:underline;text-underline-offset:3px}.note-form-footer button{background:var(--ink);color:var(--paper);font-size:13px;min-height:50px;padding:14px 19px;display:flex;align-items:center;justify-content:space-between;gap:45px;white-space:nowrap}.note-form-footer button span{font-size:19px}.contact-bottom{border-top:1px solid var(--rule);padding-top:30px}
 @media(max-width:760px){.note-layout{grid-template-columns:1fr;gap:25px;padding:35px 0 45px}.note-intro .hand{margin-bottom:20px}.note-intro h3{font-size:31px}.note-intro p{margin-top:15px;max-width:100%}.note-form-footer{align-items:flex-start;flex-direction:column-reverse;gap:16px}.note-form-footer button{width:100%}.contact-bottom{padding-top:25px}}
+
+.letzgo-chat-link{margin-left:1.25rem;text-decoration:underline;text-underline-offset:4px}
+.letzgo-chat #letzgo-chat-transcript article{margin:1.5rem 0;padding-bottom:1.25rem;border-bottom:1px solid var(--rule)}
+.letzgo-chat #letzgo-chat-transcript h3{font-size:1.1rem;overflow-wrap:anywhere}
+.letzgo-chat #letzgo-chat-transcript p{white-space:pre-wrap}
+.letzgo-chat #letzgo-chat-transcript a{text-decoration:underline;text-underline-offset:3px}
+.letzgo-chat .note-form{margin-top:1.5rem}
+.letzgo-chat button:disabled{opacity:.65;cursor:wait}
+.letzgo-chat noscript{display:block;margin-top:1rem}
+html:not(.js) .letzgo-chat form{display:none}

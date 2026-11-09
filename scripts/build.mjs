@@ -18,7 +18,7 @@ export async function build() {
   await cp(resolve(projectRoot,'src/styles.css'), resolve(outputRoot,'styles.css'));
   await cp(resolve(projectRoot,'src/client.js'), resolve(outputRoot,'client.js'));
   await cp(resolve(projectRoot,'src/experience.css'), resolve(outputRoot,'experience.css'));
-  for (const file of ['match-demo.js','matching.js']) await cp(resolve(projectRoot,'src',file),resolve(outputRoot,file));
+  for (const file of ['match-demo.js','matching.js','letzgo-chat.js']) await cp(resolve(projectRoot,'src',file),resolve(outputRoot,file));
   await writeFile(resolve(outputRoot,'robots.txt'),'User-agent: *\nAllow: /\nSitemap: https://chiragaggarwal.cloud/sitemap.xml\n');
   const urls=[...pages.keys()].filter(path=>path.endsWith('index.html')).map(path=>`<url><loc>https://chiragaggarwal.cloud/${path.replace('index.html','')}</loc></url>`).join('');
   await writeFile(resolve(outputRoot,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`);
