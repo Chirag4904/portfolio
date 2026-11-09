@@ -1,4 +1,3 @@
-import { notes } from '../src/guide-notes.js';
 import { readLines } from '../src/guide-stream.js';
 
 const model = '@cf/google/gemma-4-26b-a4b-it';
@@ -27,6 +26,7 @@ export async function POST(request) {
   }
   const previous = typeof input.previous === 'string' ? input.previous.trim().slice(0, limit) : '';
   const streaming = request.headers.get('accept')?.includes('application/x-ndjson');
+  const topic = streaming && ['letzgo', 'popin', 'resume'].includes(input.topic) ? input.topic : '';
   const greeting = streaming && /^(?:hi|hey|hello|how are you|thanks|thank you|good (?:morning|afternoon|evening))[.!? ]*$/i.test(question);
   if (greeting) {
     const text = /^thank/i.test(question)
@@ -45,12 +45,13 @@ export async function POST(request) {
   }
 
   try {
-    const namespace = streaming ? 'field-guide' : 'letzgo';
+    const namespace = streaming ? 'field-guide-v2' : 'letzgo';
     const matches = await postJson(new URL('/query-data/' + namespace, indexUrl), indexToken, {
       data: previous ? `${question}\nPrevious question: ${previous}` : question,
       topK: 3,
       includeData: true,
       includeMetadata: true,
+      ...(topic && { filter: `document = '${topic}'` }),
     });
     const passages = matches.result.filter(match => typeof match.data === 'string'
       && typeof match.metadata?.title === 'string' && /^[a-z-]+$/.test(match.metadata?.anchor ?? ''));
@@ -102,6 +103,10 @@ const streamHeaders = { 'Content-Type': 'application/x-ndjson; charset=utf-8', '
 
 function passageSource({ metadata }) {
   const { anchor, title, document } = metadata;
+  if (document === 'site') {
+    const href = metadata.href;
+    return /^\/(?:projects\/(?:letzgo|popin|ez-allocate)\/)?(?:#[a-z][a-z0-9-]*)?$/.test(href) ? { title, href } : null;
+  }
   if (document === 'resume') {
     const sections = { profile: 'Profile', experience: 'Experience', projects: 'Projects', skills: 'Technical skills', education: 'Education' };
     return Object.hasOwn(sections, anchor) ? { title: 'Résumé · ' + sections[anchor], href: '/resume/#' + anchor } : null;
@@ -129,13 +134,7 @@ function passageSource({ metadata }) {
 }
 
 async function streamGuide({ request, question, previous, passages, account, aiToken }) {
-  const context = [
-    ...passages.map(passage => ({ text: passage.data, source: passageSource(passage) })),
-    ...notes.filter(note => note.publicContext).map(note => ({
-      text: note.publicContext,
-      source: { title: note.title, href: note.href },
-    })),
-  ];
+  const context = passages.map(passage => ({ text: passage.data, source: passageSource(passage) }));
   const upstream = new AbortController();
   const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/ai/run/${model}`, {
     method: 'POST',

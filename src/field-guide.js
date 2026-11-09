@@ -15,9 +15,16 @@ const field = form.elements.question;
 const send = form.querySelector('button');
 const status = find('[data-guide-status]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const topics = {
+  site: { label: '00 / OVERVIEW', heading: 'There’s a story behind every build.', description: 'Ask about the projects, the portfolio, or Chirag’s work.', placeholder: 'Ask about the portfolio…', prompts: ['What projects has Chirag built?', 'What does Chirag work on at HERE?', 'What award did Chirag’s hackathon team receive?'] },
+  letzgo: { label: '01 / LETZGO', heading: 'A shared ride, engineered.', description: 'Explore the route decisions, real-time GPS, and the backend behind a trip.', placeholder: 'Ask about LetzGo…', prompts: ['Why are there only six valid stop orders?', 'How did LetzGo handle live GPS?'] },
+  popin: { label: '02 / POPIN', heading: 'A city, one viewport at a time.', description: 'Explore the event map, organizer tools, and the delivery pipeline.', placeholder: 'Ask about Popin…', prompts: ['How does Popin search the map?', 'How did Popin keep Flutter golden tests consistent?'] },
+  resume: { label: '03 / RÉSUMÉ', heading: 'A closer look at the experience.', description: 'Explore roles, project contributions, education, and the latest skills.', placeholder: 'Ask about the résumé…', prompts: ['What skills are on Chirag’s résumé?', 'What did Chirag study?'] },
+};
 const history = [];
 const seen = new Set();
 let previous = '';
+let activeTopic = 'site';
 let returnFocus;
 let request;
 let currentNote;
@@ -57,7 +64,7 @@ function showNote() {
   visitor.hidden = false;
 
   const distance = innerWidth > 560 ? Math.min(150, innerWidth * .15) : 25;
-  noteMotion = find('.guide-visitor-bird').animate([
+  noteMotion = find('.guide-visitor-mark').animate([
     { transform: `translate(${-distance}px, 9px) rotate(-9deg)`, opacity: 0 },
     { transform: `translate(${-distance * .55}px, -3px) rotate(5deg)`, opacity: 1 },
     { transform: 'translate(0, 0) rotate(0)', opacity: 1 },
@@ -76,9 +83,20 @@ function openGuide(trigger) {
   thread.scrollTop = thread.scrollHeight;
 }
 
-function renderSuggestions() {
-  const choices = new Set([selectNote().question, notes[2].question, 'What skills are on Chirag’s résumé?', notes[0].question]);
-  for (const question of Array.from(choices).slice(0, 3)) {
+function selectTopic(key) {
+  if (!Object.hasOwn(topics, key)) return;
+  if (key !== activeTopic) previous = '';
+  activeTopic = key;
+  const topic = topics[key];
+  for (const button of root.querySelectorAll('[data-guide-topic]')) {
+    button.setAttribute('aria-pressed', String(button.dataset.guideTopic === key));
+  }
+  find('[data-guide-topic-label]').textContent = topic.label;
+  find('[data-guide-topic-heading]').textContent = topic.heading;
+  find('[data-guide-topic-description]').textContent = topic.description;
+  field.placeholder = topic.placeholder;
+  starters.replaceChildren();
+  for (const question of topic.prompts) {
     const button = document.createElement('button');
     button.type = 'button';
     const arrow = document.createElement('span');
@@ -99,7 +117,9 @@ function appendTurn(question) {
     message.className = 'guide-message guide-message-' + role;
     const label = document.createElement('span');
     label.className = 'mono';
-    label.textContent = role === 'user' ? 'YOU' : 'GUIDE';
+    label.textContent = role === 'user'
+      ? 'YOUR QUESTION / ' + String(turns.children.length + 1).padStart(2, '0')
+      : 'GUIDE’S NOTE';
     const content = document.createElement('p');
     content.textContent = text;
     message.append(label, content);
@@ -139,6 +159,7 @@ async function ask(question) {
   if (!question || request) return;
   const controller = new AbortController();
   request = controller;
+  const topic = activeTopic;
   const message = appendTurn(question);
   const output = message.querySelector('p');
   let answer = '';
@@ -153,7 +174,7 @@ async function ask(question) {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/x-ndjson' },
-      body: JSON.stringify({ question, previous }),
+      body: JSON.stringify({ question, previous, topic }),
       signal: controller.signal,
     });
     if (!response.ok || !response.body) {
@@ -176,7 +197,7 @@ async function ask(question) {
     if (!answer.trim()) throw new Error('The guide sent an empty reply. Try again.');
     addSource(message, source);
     if (thread.scrollHeight - thread.scrollTop - thread.clientHeight < 60) thread.scrollTop = thread.scrollHeight;
-    previous = question;
+    if (topic === activeTopic) previous = question;
     remember({ question, answer, source });
     setStatus('Reply complete.');
   } catch (error) {
@@ -203,8 +224,15 @@ find('[data-guide-dismiss]').addEventListener('click', () => {
 });
 find('[data-guide-note-ask]').addEventListener('click', () => {
   openGuide(launch);
-  if (currentNote) ask(currentNote.question);
+  if (currentNote) {
+    const key = currentNote.topic.toLowerCase();
+    selectTopic(Object.hasOwn(topics, key) ? key : 'site');
+    ask(currentNote.question);
+  }
 });
+for (const button of root.querySelectorAll('[data-guide-topic]')) {
+  button.addEventListener('click', () => selectTopic(button.dataset.guideTopic));
+}
 panel.addEventListener('close', () => {
   launch.setAttribute('aria-expanded', 'false');
   returnFocus?.focus({ preventScroll: true });
@@ -244,7 +272,8 @@ try {
     }
   }
 } catch { /* Optional. */ }
-renderSuggestions();
+const pageTopic = location.pathname.match(/^\/(?:projects\/)?(letzgo|popin|resume)\//)?.[1];
+selectTopic(pageTopic ?? 'site');
 root.hidden = false;
 for (const trigger of document.querySelectorAll('button[data-guide-open][hidden]')) trigger.hidden = false;
 handleHash();

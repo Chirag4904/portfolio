@@ -66,6 +66,8 @@ The contact form sends messages to the portfolio email through FormSubmit, with 
 
 ## Portfolio field guide
 
-The sitewide guide sends questions to `/api/chat`. Vercel needs `UPSTASH_VECTOR_REST_URL`, `UPSTASH_VECTOR_REST_TOKEN` (read-only), `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN`. The function uses Gemma 4 to stream answers from the `field-guide` namespace. The original JSON endpoint continues to read the `letzgo` namespace.
+The sitewide guide sends questions to `/api/chat`. Vercel needs `UPSTASH_VECTOR_REST_URL`, `UPSTASH_VECTOR_REST_TOKEN` (read-only), `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN`. The function uses Gemma 4 to stream answers from the `field-guide-v2` namespace. The original JSON endpoint continues to read the `letzgo` namespace.
 
-Keep the case studies and the résumé text in the Git-ignored `rag/sources/` directory. Generate the Upstash request body with `node rag/chunk.mjs rag/sources/popin.md popin`. Use `letzgo`, `popin`, or `resume` to select the document and upload its generated chunks to `/upsert-data/field-guide`. After verifying a replacement, remove leftover IDs for that document beyond its new chunk count. The résumé text starts at its Summary section so contact details stay out of retrieval.
+Keep the case studies and the résumé text in the Git-ignored `rag/sources/` directory. Generate the Upstash request body with `node rag/chunk.mjs rag/sources/popin.md popin`. Use `letzgo`, `popin`, or `resume` to select the document and upload its generated chunks to `/upsert-data/field-guide-v2`. After verifying a replacement, remove leftover IDs for that document beyond its new chunk count. The résumé text starts at its Summary section so contact details stay out of retrieval.
+
+Refresh the public portfolio text with `npm run build && python3 rag/site-text.py > rag/sources/site.md`. Generate its chunks with `node rag/chunk.mjs rag/sources/site.md site` and upload them to the same preview namespace. The extractor reads the homepage and the project stories. The résumé comes from its separately extracted PDF text.

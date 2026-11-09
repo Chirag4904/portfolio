@@ -1,36 +1,46 @@
-const bird = `<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 26 18 27 26 12a8 8 0 0 1 14 4l5 3-5 2c0 11-8 16-18 16-8 0-13-4-17-11Z" fill="var(--bird-fill,#9cb0ff)"/><path d="m17 27 15-5-5 12-10-7Z" fill="var(--bird-wing,#5865e7)"/><path d="M24 38v3m8-4v4" stroke="var(--bird-fill,#9cb0ff)" stroke-width="2" stroke-linecap="round"/><circle cx="35.5" cy="15.5" r="1.6" fill="#20244c"/><path d="M7 21h8m-5-5h5" stroke="var(--bird-fill,#9cb0ff)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/></svg>`;
+const signal = `<svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M22 3v6m0 26v6M3 22h6m26 0h6" stroke="currentColor" stroke-width="1.5" opacity=".5"/><circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="36 8 9 10"/><path d="m30 14-4 12-12 4 4-12 12-4Z" fill="currentColor"/><circle cx="22" cy="22" r="2" fill="#1c211c"/></svg>`;
 
-export const guide = `<aside class="field-guide" data-field-guide hidden aria-label="Portfolio field guide">
+export const guide = `<aside class="field-guide" data-field-guide hidden aria-label="Portfolio guide">
   <div class="guide-visitor" data-guide-visitor hidden>
-    <span class="guide-visitor-bird" aria-hidden="true">${bird}</span>
-    <section class="guide-note" aria-label="A note from the field guide">
+    <span class="guide-visitor-mark" aria-hidden="true">${signal}</span>
+    <section class="guide-note" aria-label="A portfolio field note">
       <div class="guide-note-head"><span class="mono" data-guide-note-topic></span><button type="button" data-guide-dismiss aria-label="Dismiss note">×</button></div>
       <p data-guide-note-text></p>
       <button type="button" class="guide-note-action" data-guide-note-ask>Tell me more <span aria-hidden="true">↗</span></button>
     </section>
   </div>
-  <button type="button" class="guide-launch" data-guide-open aria-haspopup="dialog" aria-controls="portfolio-guide" aria-expanded="false">
-    <span class="guide-launch-mark">${bird}</span><span>Ask the guide</span><span class="guide-launch-arrow" aria-hidden="true">↗</span>
+  <button type="button" class="guide-launch" data-guide-open aria-haspopup="dialog" aria-controls="portfolio-guide" aria-expanded="false" aria-label="Ask the guide">
+    <span class="guide-launch-mark">${signal}</span><span class="guide-launch-label"><small class="mono">FIELD NOTES</small><strong>Ask the guide</strong></span><span class="guide-launch-arrow" aria-hidden="true">↗</span>
   </button>
   <dialog id="portfolio-guide" class="guide-panel" aria-labelledby="portfolio-guide-title">
     <header class="guide-panel-head">
-      <div class="guide-panel-brand"><span class="guide-brand-mark">${bird}</span><div><h2 id="portfolio-guide-title">Portfolio guide</h2><p class="guide-kicker"><span aria-hidden="true"></span> AI assistant</p></div></div>
+      <div class="guide-panel-brand"><span class="guide-brand-mark">${signal}</span><div><p class="mono guide-kicker">CHIRAG AGGARWAL / PORTFOLIO</p><h2 id="portfolio-guide-title">Field notes<span>.</span></h2></div></div>
       <button type="button" class="guide-close" data-guide-close aria-label="Close field guide">×</button>
     </header>
-    <div class="guide-conversation" data-guide-thread aria-label="Conversation">
-      <div class="guide-welcome" data-guide-welcome>
-        <span class="guide-welcome-mark">${bird}</span>
-        <h3>Explore the work.</h3>
-        <p>Ask about LetzGo, Popin, or Chirag’s experience.</p>
-        <p class="guide-suggestions-label">Suggested questions</p>
-        <div class="guide-starters" data-guide-starters aria-label="Suggested questions"></div>
+    <div class="guide-desk">
+      <nav class="guide-topics" aria-label="Guide topics">
+        <p class="mono">INDEX</p>
+        <button type="button" data-guide-topic="site" aria-pressed="true"><span aria-hidden="true">00</span> Explore</button>
+        <button type="button" data-guide-topic="letzgo" aria-pressed="false"><span aria-hidden="true">01</span> LetzGo</button>
+        <button type="button" data-guide-topic="popin" aria-pressed="false"><span aria-hidden="true">02</span> Popin</button>
+        <button type="button" data-guide-topic="resume" aria-pressed="false"><span aria-hidden="true">03</span> Résumé</button>
+        <div class="guide-rail-caption"><span aria-hidden="true"></span><p>AI guide<br>Project notes &amp; portfolio</p></div>
+      </nav>
+      <div class="guide-reading">
+        <div class="guide-conversation" data-guide-thread aria-label="Conversation">
+          <div class="guide-welcome" data-guide-welcome>
+            <p class="mono guide-file-label" data-guide-topic-label>00 / OVERVIEW</p>
+            <h3 data-guide-topic-heading>There’s a story behind every build.</h3>
+            <p data-guide-topic-description>Ask about the projects, the portfolio, or Chirag’s work.</p>
+            <div class="guide-starters" data-guide-starters aria-label="Suggested questions"></div>
+          </div>
+          <div class="guide-turns" data-guide-turns></div>
+        </div>
+        <form class="guide-compose" data-guide-form>
+          <p class="guide-status mono" data-guide-status role="status" hidden></p>
+          <div class="guide-input-row"><span class="guide-input-symbol" aria-hidden="true">↳</span><label class="sr-only" for="portfolio-guide-input">Your question</label><input id="portfolio-guide-input" name="question" type="text" maxlength="600" placeholder="Ask a question…" autocomplete="off" required><button type="submit" class="guide-send" aria-label="Send question">↑</button></div>
+        </form>
       </div>
-      <div class="guide-turns" data-guide-turns></div>
     </div>
-    <form class="guide-compose" data-guide-form>
-      <p class="guide-status mono" data-guide-status role="status" hidden></p>
-      <div class="guide-input-row"><label class="sr-only" for="portfolio-guide-input">Your question</label><input id="portfolio-guide-input" name="question" type="text" maxlength="600" placeholder="Ask a question…" autocomplete="off" required><button type="submit" class="guide-send" aria-label="Send question">↑</button></div>
-      <p class="guide-disclosure">Answers from case studies and the latest résumé</p>
-    </form>
   </dialog>
 </aside>`;

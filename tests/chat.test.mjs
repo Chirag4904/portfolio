@@ -45,7 +45,8 @@ test('retrieves passages and returns a grounded answer with case study links', a
 
 test('streams reply fragments and at most one matching site section', async t => {
   const fetchMock = t.mock.method(globalThis, 'fetch', async (url, options) => {
-    if (String(url).endsWith('/query-data/field-guide')) {
+    if (String(url).endsWith('/query-data/field-guide-v2')) {
+      assert.equal(JSON.parse(options.body).filter, "document = 'letzgo'");
       return Response.json({ result: [
         { data: 'Six orders satisfy the pickup constraint.', metadata: { title: 'Precedence Constraints & Permutations', anchor: 'routing' } },
         { data: 'Progressive pricing brackets.', metadata: { title: '3.4. Dynamic Bracketed Commute Pricing Model', anchor: 'reliability' } },
@@ -68,7 +69,7 @@ test('streams reply fragments and at most one matching site section', async t =>
       },
     }));
   });
-  const incoming = request({ question: 'Why only six?' });
+  const incoming = request({ question: 'Why only six?', topic: 'letzgo' });
   incoming.headers.set('Accept', 'application/x-ndjson');
   const response = await POST(incoming);
   assert.match(response.headers.get('content-type'), /application\/x-ndjson/);

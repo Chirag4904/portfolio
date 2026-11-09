@@ -20,8 +20,8 @@ const anchors = {
 const maxLength = 2000;
 const overlap = 200;
 const document = process.argv[3] ?? 'letzgo';
-const labels = { letzgo: 'LetzGo case study', popin: 'Popin case study', resume: 'Chirag Aggarwal résumé' };
-if (!Object.hasOwn(labels, document)) throw new Error('Use letzgo, popin, or resume as the document name.');
+const labels = { letzgo: 'LetzGo case study', popin: 'Popin case study', resume: 'Chirag Aggarwal résumé', site: 'Portfolio website' };
+if (!Object.hasOwn(labels, document)) throw new Error('Use letzgo, popin, resume, or site as the document name.');
 const source = readFileSync(process.argv[2] ?? 0, 'utf8')
   .replace(/\r\n/g, '\n')
   .replace(/\[([^\]\n]*)\]\(file:\/\/[^)\n]+\)/gi, '$1');
@@ -58,7 +58,9 @@ function saveSection() {
   lines = [];
   if (!body) return;
 
-  const title = headings.at(-1)?.title ?? labels[document];
+  const sectionTitle = headings.at(-1)?.title ?? labels[document];
+  const siteSection = document === 'site' ? /^(\/\S*) \| (.+)$/.exec(sectionTitle) : null;
+  const title = siteSection?.[2] ?? sectionTitle;
   const section = headings.findLast(heading => heading.level >= 2
     && heading.level <= 3 && /^\d/.test(heading.title));
   const number = section?.title.match(/^\d+(?:\.\d+)*/)?.[0];
@@ -67,7 +69,7 @@ function saveSection() {
   let anchor = 'main';
   if (document === 'letzgo') anchor = anchors[number] ?? anchors[number?.split('.')[0]] ?? anchor;
   if (document === 'resume') anchor = resumeAnchors[resumeSection] ?? anchor;
-  const context = headings.map(heading => heading.title).join(' / ');
+  const context = siteSection ? 'Chirag Aggarwal portfolio / ' + title : headings.map(heading => heading.title).join(' / ');
 
   for (let start = 0; start < body.length;) {
     const window = body.slice(start, start + maxLength);
@@ -83,7 +85,7 @@ function saveSection() {
     records.push({
       id: `${document}-doc-${records.length + 1}`,
       data: [context, body.slice(start, end).trim()].filter(Boolean).join('\n\n'),
-      metadata: { title, anchor, document },
+      metadata: { title, anchor, document, ...(siteSection && { href: siteSection[1] }) },
     });
     if (end === body.length) break;
 
