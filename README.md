@@ -64,8 +64,8 @@ Sketchbook audio is temporarily disabled. Its source and commented integration p
 
 The contact form sends messages to the portfolio email through FormSubmit, with its default spam protection. The first submission triggers a confirmation email; open its activation link before relying on the form. Visitor name and reply email are optional. Successful submissions return to `/thank-you/`. The existing email link remains available.
 
-## LetzGo assistant
+## Portfolio field guide
 
-The LetzGo page sends questions to `/api/chat`. Vercel needs `UPSTASH_VECTOR_REST_URL`, `UPSTASH_VECTOR_REST_TOKEN` (read-only), `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN`. The function searches the `letzgo` namespace and uses Gemma 4 to answer from the retrieved passages.
+The sitewide guide sends questions to `/api/chat`. Vercel needs `UPSTASH_VECTOR_REST_URL`, `UPSTASH_VECTOR_REST_TOKEN` (read-only), `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN`. The function searches the `letzgo` namespace and uses Gemma 4 to stream answers from the retrieved passages and public portfolio details.
 
 Keep the original case study in the Git-ignored `rag/sources/` directory. Run `node rag/chunk.mjs rag/sources/letzgo.md` to generate the request body for Upstash's `/upsert-data/letzgo` endpoint. After reindexing a shorter document, remove leftover `letzgo-doc-*` IDs beyond the new chunk count.
