@@ -95,6 +95,18 @@ try {
  await petButton.click();
  assert.match(await finding.textContent(),/LetzGo/);
  assert.notEqual(await finding.textContent(),firstFinding);
+ await page.route('**/api/chat', route=>route.fulfill({
+   contentType:'application/x-ndjson',
+   body:JSON.stringify({text:'A test reply that should appear progressively.'})+'\n',
+ }));
+ const question=scoutChat.getByRole('textbox',{name:'Your question'});
+ const composeScout=scoutChat.locator('[data-scout-compose] .guide-panel-scout-sprite');
+ await question.fill('How does LetzGo match routes?');
+ await question.press('Enter');
+ await scoutChat.getByText('A test reply that should appear progressively.',{exact:true}).waitFor();
+ await scoutChat.getByRole('button',{name:'Send question'}).waitFor();
+ assert.equal(await composeScout.isVisible(),true,'Domi stays by the composer after the reply');
+ await page.unroute('**/api/chat');
  await page.keyboard.press('Escape');
  await page.getByRole('dialog').waitFor({state:'hidden'});
  assert.equal(await scout.evaluate(button=>button===document.activeElement),true);

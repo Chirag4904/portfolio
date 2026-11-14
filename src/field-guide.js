@@ -91,9 +91,10 @@ function scheduleProjectNote() {
 }
 
 function moveScout(destination) {
+  if (petSprite.parentElement === destination) return;
   const from = petSprite.getBoundingClientRect();
   petMotion?.cancel();
-  if (petSprite.parentElement !== destination) destination.append(petSprite);
+  destination.append(petSprite);
   if (!panel.open || motionPaused()) return;
   const to = petSprite.getBoundingClientRect();
   const dx = from.width ? from.left - to.left : 0;
@@ -127,7 +128,7 @@ function openGuide(trigger) {
   launch.setAttribute('aria-expanded', 'true');
   thread.scrollTop = thread.scrollHeight;
   scheduleProjectNote();
-  moveScout(petHome);
+  moveScout(request ? petCompose : petHome);
 }
 
 function selectTopic(key) {
@@ -220,6 +221,9 @@ async function ask(question, prior = previous) {
   const output = message.querySelector('p');
   let answer = '';
   let source;
+  const queued = [];
+  let displayed = 0;
+  let finishPacing;
   field.value = '';
   send.textContent = '■';
   send.setAttribute('aria-label', 'Stop reply');
@@ -228,6 +232,25 @@ async function ask(question, prior = previous) {
   chatNoteAsk.disabled = true;
   setStatus('Looking through the notes…');
   thread.scrollTop = thread.scrollHeight;
+
+  // Buffer a few characters so network bursts don't set the reading pace.
+  const pacing = setInterval(() => {
+    if (!displayed && queued.length < 24 && !finishPacing) return;
+    if (displayed < queued.length) {
+      const follow = thread.scrollHeight - thread.scrollTop - thread.clientHeight < 60;
+      const next = Math.min(displayed + 4, queued.length);
+      answer += queued.slice(displayed, next).join('');
+      displayed = next;
+      output.textContent = answer;
+      setStatus('Replying…');
+      if (follow) thread.scrollTop = thread.scrollHeight;
+    }
+    if (displayed === queued.length) finishPacing?.();
+  }, 50);
+  controller.signal.addEventListener('abort', () => {
+    clearInterval(pacing);
+    finishPacing?.();
+  }, { once: true });
 
   try {
     const response = await fetch('/api/chat', {
@@ -245,15 +268,13 @@ async function ask(question, prior = previous) {
       if (!line.trim()) continue;
       const event = JSON.parse(line);
       if (event.error) throw new Error(event.error);
-      if (typeof event.text === 'string') {
-        const follow = thread.scrollHeight - thread.scrollTop - thread.clientHeight < 60;
-        answer += event.text;
-        output.textContent = answer;
-        setStatus('Replying…');
-        if (follow) thread.scrollTop = thread.scrollHeight;
-      }
+      if (typeof event.text === 'string') queued.push(...event.text);
       if (event.source) source = event.source;
     }
+    if (displayed < queued.length && !controller.signal.aborted) {
+      await new Promise(resolve => { finishPacing = resolve; });
+    }
+    controller.signal.throwIfAborted();
     if (!answer.trim()) throw new Error('The guide sent an empty reply. Try again.');
     addSource(message, source);
     if (thread.scrollHeight - thread.scrollTop - thread.clientHeight < 60) thread.scrollTop = thread.scrollHeight;
@@ -265,10 +286,10 @@ async function ask(question, prior = previous) {
     if (!answer) output.textContent = messageText;
     setStatus(messageText);
   } finally {
+    clearInterval(pacing);
     request = null;
     panel.dataset.scoutState = 'ready';
     chatNoteAsk.disabled = false;
-    if (petCompose.contains(petSprite)) moveScout(petHome);
     send.textContent = '↑';
     send.setAttribute('aria-label', 'Send question');
   }

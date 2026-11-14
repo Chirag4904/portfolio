@@ -48,7 +48,7 @@
 .guide-topics{display:flex;flex-direction:column;min-width:0;gap:4px;padding:15px 9px 11px;background:#f8ead7;border-right:1px solid var(--guide-line)}
 .guide-topics>.mono{font-size:9px;letter-spacing:.13em;color:#a05b37;padding:0 7px 6px}
 .guide-topics button{display:flex;align-items:center;gap:7px;min-height:38px;padding:7px;border:1px solid transparent;border-radius:10px;background:transparent;color:#684330;text-align:left;font-size:12px;white-space:nowrap}
-.guide-topics button span{font-size:15px;color:#c16b36}
+.guide-topic-icon{width:15px;height:15px;flex:none;fill:none;stroke:#c16b36;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7}
 .guide-topics button[aria-pressed=true]{background:#fff9ee;color:#552f20;font-weight:720;box-shadow:0 2px 6px #78421a10}
 .guide-reading{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0}
 .guide-tech{grid-row:1;padding:8px 14px 10px;background:#fff4e4;border-bottom:1px solid var(--guide-line)}
@@ -100,8 +100,8 @@
   .guide-panel-head{grid-template-columns:auto 1fr auto;padding:8px 9px}
   .guide-desk{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
   .guide-topics{flex-direction:row;justify-content:space-between;gap:2px;padding:5px 6px;border:0;border-bottom:1px solid var(--guide-line);overflow:auto}
-  .guide-topics button{justify-content:center;flex:0 0 auto;min-width:0;padding:6px 8px;font-size:11px}
-  .guide-topics>.mono,.guide-topics button span{display:none}
+  .guide-topics button{flex-direction:column;justify-content:center;gap:2px;flex:1;min-width:0;min-height:44px;padding:3px 2px;font-size:11px}
+  .guide-topics>.mono{display:none}
   .guide-welcome{padding:19px 16px 15px}
   .guide-turns:not(:empty){padding:10px 15px}
   .guide-chat-note{margin:11px 12px 0}
@@ -109,7 +109,6 @@
 }
 @media(max-width:360px){
   .guide-kicker{display:none}
-  .guide-topics button{padding-inline:5px}
 }
 @media print{
   .field-guide,.guide-case-link{display:none!important}

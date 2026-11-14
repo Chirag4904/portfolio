@@ -1,3 +1,11 @@
+const topicIcons = {
+  home: '<svg class="guide-topic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><path d="M9 21v-7h6v7"/></svg>',
+  car: '<svg class="guide-topic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 1.6-6.2A2 2 0 0 1 8.5 8h7a2 2 0 0 1 1.9 1.8L19 16"/><path d="M4 16h16v4H4Z"/><path d="M7 20v1m10-1v1M7.5 13h.01m9-.01h.01"/></svg>',
+  pin: '<svg class="guide-topic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5.3-8 11-8 11S4 15.3 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  allocate: '<svg class="guide-topic-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3h6v3H9zM9 11l1.4 1.4L13 9.8m2 2.2h2m-8 5 1.4 1.4L13 14.8m2 2.2h2"/></svg>',
+  resume: '<svg class="guide-topic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4M9 12h6m-6 4h6"/></svg>',
+};
+
 export const guide = `<aside class="field-guide" data-field-guide hidden aria-label="Domi, portfolio guide">
   <div class="guide-visitor" data-guide-visitor hidden>
     <section class="guide-note" aria-label="A note from Domi">
@@ -18,11 +26,11 @@ export const guide = `<aside class="field-guide" data-field-guide hidden aria-la
     <div class="guide-desk">
       <nav class="guide-topics" aria-label="Guide topics">
         <p class="mono">WHERE TO?</p>
-        <button type="button" data-guide-topic="site" aria-pressed="true"><span aria-hidden="true">⌂</span> Explore</button>
-        <button type="button" data-guide-topic="letzgo" aria-pressed="false"><span aria-hidden="true">↗</span> LetzGo</button>
-        <button type="button" data-guide-topic="popin" aria-pressed="false"><span aria-hidden="true">◌</span> Popin</button>
-        <button type="button" data-guide-topic="ez-allocate" aria-pressed="false"><span aria-hidden="true">+</span> EZ-Allocate</button>
-        <button type="button" data-guide-topic="resume" aria-pressed="false"><span aria-hidden="true">□</span> Resume</button>
+        <button type="button" data-guide-topic="site" aria-pressed="true">${topicIcons.home} Explore</button>
+        <button type="button" data-guide-topic="letzgo" aria-pressed="false">${topicIcons.car} LetzGo</button>
+        <button type="button" data-guide-topic="popin" aria-pressed="false">${topicIcons.pin} Popin</button>
+        <button type="button" data-guide-topic="ez-allocate" aria-pressed="false">${topicIcons.allocate} EZ-Allocate</button>
+        <button type="button" data-guide-topic="resume" aria-pressed="false">${topicIcons.resume} Resume</button>
       </nav>
       <div class="guide-reading">
         <section class="guide-tech" data-guide-tech aria-label="Project technologies" hidden><p class="mono">PROJECT TOOLS</p><div data-guide-tech-items></div></section>
