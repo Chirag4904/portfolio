@@ -57,8 +57,8 @@ test('content preserves project order and qualified ownership',()=>{
   const home=pages.get('index.html')();
   assert.ok(home.indexOf('01 — LETZGO')<home.indexOf('02 — POPIN'));
   assert.equal((home.match(/class="project-feature /g)||[]).length,2);
-  assert.match(pages.get('projects/ez-allocate/index.html')(),/do not identify my individual feature ownership/);
-  assert.match(pages.get('projects/letzgo/index.html')(),/Exact tier names and distance thresholds are not specified/);
+  assert.match(pages.get('projects/ez-allocate/index.html')(),/college team project/);
+  assert.match(pages.get('projects/letzgo/index.html')(),/Candidates move through four filtering stages/);
   assert.match(home,/I want to build something that matters/);
   assert.equal((home.match(/data-thought="/g)||[]).length,3);
   assert.equal((home.match(/data-thought-select="/g)||[]).length,3);
@@ -68,6 +68,7 @@ test('content preserves project order and qualified ownership',()=>{
 test('résumé is readable without an embedded viewer and retains the original PDF',()=>{
   const html=pages.get('resume/index.html')();
   for(const text of ['HERE Technologies','Payatu','LetzGo','Popin','Bennett University']) assert.ok(html.includes(text));
+  for(const text of ['70% of queries met the ≥ 0.8 confidence threshold','Full-Stack Intern','200-user Gatling load tests']) assert.ok(html.includes(text));
   assert.doesNotMatch(html,/<object/);
   assert.match(html,/href="\/assets\/chirag-aggarwal-resume\.pdf" download=/);
 });

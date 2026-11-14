@@ -21,7 +21,7 @@ export function routeScene({detail=false}={}) {
     <div class="match-results"><div class="match-results-heading mono"><span>PICKUP RANKING</span><span>DISTANCE FROM ROUTE</span></div><ol data-match-results></ol><p data-match-status role="status" class="match-status">Move a pin to explore the ranking.</p></div>
     <p class="match-fallback">The interactive ranking needs JavaScript. The route illustration shows pickups around a shared journey.</p>
     <details class="match-method"><summary>How this sketch ranks <span>+</span></summary><p>This demo sorts pickups by their shortest straight-line distance to the drawn route, in diagram units. Everyone shares destination B. It does not model roads, travel time, direction, or LetzGo’s production matching rules.</p></details>
-    ${detail?`<div class="tier-line" aria-label="Four classification tiers"><span>01 <i></i></span><span>02 <i></i></span><span>03 <i></i></span><span>04 <i></i></span><b>Road-network queries ↗</b></div><p class="diagram-note">Four tiers classify candidates before road-network queries. Exact tier names and distance thresholds are not specified in the resume; this is a conceptual illustration.</p>`:''}
+    ${detail?`<div class="tier-line" aria-label="Four classification tiers"><span>01 <i></i></span><span>02 <i></i></span><span>03 <i></i></span><span>04 <i></i></span><b>Road-network queries ↗</b></div><p class="diagram-note">Candidates move through four filtering stages before the remaining routes are evaluated on the road network.</p>`:''}
   </figure>`;
 }
 
