@@ -3,3 +3,4 @@ node_modules/
 .DS_Store
 test-results/
 rag/sources/
+.env.local

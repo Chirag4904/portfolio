@@ -1,11 +1,13 @@
-import { notes } from './guide-notes.js';
+import { notes, pickNote } from './guide-notes.js';
 import { readLines } from './guide-stream.js';
+import { startScout } from './scout.js';
 
 const root = document.querySelector('[data-field-guide]');
 const find = selector => root.querySelector(selector);
 const panel = find('dialog');
 const launch = find('.guide-launch');
 const visitor = find('[data-guide-visitor]');
+const noteAsk = find('[data-guide-note-ask]');
 const thread = find('[data-guide-thread]');
 const turns = find('[data-guide-turns]');
 const welcome = find('[data-guide-welcome]');
@@ -16,11 +18,22 @@ const form = find('[data-guide-form]');
 const field = form.elements.question;
 const send = form.querySelector('button');
 const status = find('[data-guide-status]');
+const pet = find('[data-scout-pet]');
+const petSprite = pet.querySelector('.guide-panel-scout-sprite');
+const petHome = find('[data-scout-home]');
+const petFinding = find('[data-scout-finding]');
+const petCompose = find('[data-scout-compose]');
+const chatNote = find('[data-scout-chat-note]');
+const chatNoteAsk = find('[data-scout-chat-ask]');
+const projectSlug = location.pathname.match(/^\/projects\/([^/]+)\/?$/)?.[1];
+const projectNotes = projectSlug ? notes.filter(note => note.href.split('#')[0] === `/projects/${projectSlug}/`) : [];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const hover = matchMedia('(hover: hover)');
 const topics = {
   site: { label: '00 / OVERVIEW', heading: 'There’s a story behind every build.', description: 'Ask about the projects, the portfolio, or Chirag’s work.', placeholder: 'Ask about the portfolio…', prompts: ['What projects has Chirag built?', 'What does Chirag work on at HERE?', 'What award did Chirag’s hackathon team receive?'] },
   letzgo: { name: 'LetzGo', label: '01 / LETZGO', heading: 'A shared ride, engineered.', description: 'Explore the route decisions, real-time GPS, and the backend behind a trip.', placeholder: 'Ask about LetzGo…', prompts: ['How did LetzGo reduce route-matching work?', 'How did LetzGo handle live GPS?'], technologies: ['Redis', 'BullMQ', 'Socket.IO', 'PostgreSQL', 'Stripe Connect'] },
   popin: { name: 'Popin', label: '02 / POPIN', heading: 'A city, one viewport at a time.', description: 'Explore the event map, organizer tools, and the delivery pipeline.', placeholder: 'Ask about Popin…', prompts: ['How did Popin avoid duplicate map queries?', 'How did Popin keep Flutter golden tests consistent?'], technologies: ['Flutter', 'TypeScript', 'React', 'BullMQ', 'OpenTelemetry'] },
+  'ez-allocate': { name: 'EZ-Allocate', label: 'PROJECT', heading: 'A fair workload.', description: 'Ask about faculty assignments, workload limits, and background exports.', placeholder: 'Ask about EZ-Allocate…', prompts: projectNotesFor('EZ-Allocate').map(note => note.question) },
   resume: { label: '03 / RESUME', heading: 'A closer look at the experience.', description: 'Explore roles, project contributions, education, and the latest skills.', placeholder: 'Ask about the resume…', prompts: ['What skills are on Chirag’s resume?', 'What did Chirag study?'] },
 };
 const history = [];
@@ -31,49 +44,79 @@ let returnFocus;
 let request;
 let currentNote;
 let dismissTimer;
-let noteMotion;
+let projectTimer;
+let chatFact;
+let petMotion;
+
+function projectNotesFor(topic) {
+  return notes.filter(note => note.topic === topic);
+}
 
 function motionPaused() {
   return reduced.matches || document.documentElement.classList.contains('motion-paused');
 }
 
-function selectNote() {
-  const position = innerHeight * .55;
-  const visible = notes.find(note => {
-    const bounds = document.querySelector(note.selector)?.getBoundingClientRect();
-    return bounds && bounds.top < position && bounds.bottom > position;
-  });
-  if (visible) return visible;
-  return notes.find(note => note.href.startsWith('/projects/') && note.href.split('#')[0] === location.pathname) ?? notes[0];
-}
-
 function hideNote() {
   clearTimeout(dismissTimer);
-  noteMotion?.cancel();
   visitor.hidden = true;
 }
 
-function showNote() {
-  if (document.hidden || panel.open || !visitor.hidden || motionPaused()) return;
-  const context = selectNote();
-  const unseen = notes.filter(note => !seen.has(note.question) && (location.pathname === '/' || note.topic === context.topic));
-  const note = seen.has(context.question) ? unseen[Math.floor(Math.random() * unseen.length)] : context;
-  if (!note) return;
-  seen.add(note.question);
+function showNote(note) {
+  if (!note || !visitor.hidden) return;
+  const key = note.question ?? note.text;
+  if (seen.has(key)) return;
+  seen.add(key);
   currentNote = note;
-  find('[data-guide-note-topic]').textContent = note.topic.toUpperCase() + ' / FIELD NOTE';
+  noteAsk.hidden = !note.question;
+  find('[data-guide-note-topic]').textContent = note.topic;
   find('[data-guide-note-text]').textContent = note.text;
   visitor.hidden = false;
 
-  const distance = innerWidth > 560 ? Math.min(150, innerWidth * .15) : 25;
-  noteMotion = find('.guide-visitor-mark').animate([
-    { transform: `translate(${-distance}px, 9px) rotate(-9deg)`, opacity: 0 },
-    { transform: `translate(${-distance * .55}px, -3px) rotate(5deg)`, opacity: 1 },
-    { transform: 'translate(0, 0) rotate(0)', opacity: 1 },
-  ], { duration: 480, easing: 'cubic-bezier(.77,0,.175,1)' });
-  dismissTimer = setTimeout(() => {
-    if (!visitor.matches(':focus-within, :hover')) hideNote();
-  }, 12000);
+  function dismissWhenIdle() {
+    if (visitor.matches(':focus-within') || (hover.matches && visitor.matches(':hover'))) {
+      dismissTimer = setTimeout(dismissWhenIdle, 1000);
+    }
+    else hideNote();
+  }
+  dismissTimer = setTimeout(dismissWhenIdle, note.question ? 12000 : 3000);
+}
+
+function scheduleProjectNote() {
+  clearTimeout(projectTimer);
+  if (document.hidden || panel.open || motionPaused() || projectNotes.every(note => seen.has(note.question))) return;
+  projectTimer = setTimeout(() => {
+    if (!launch.matches('[data-held], :focus-visible')) showNote(pickNote(projectNotes, seen));
+    scheduleProjectNote();
+  }, projectNotes.some(note => seen.has(note.question)) ? 20000 : 7500);
+}
+
+function moveScout(destination) {
+  const from = petSprite.getBoundingClientRect();
+  petMotion?.cancel();
+  if (petSprite.parentElement !== destination) destination.append(petSprite);
+  if (!panel.open || motionPaused()) return;
+  const to = petSprite.getBoundingClientRect();
+  const dx = from.width ? from.left - to.left : 0;
+  const dy = from.height ? from.top - to.top : 0;
+  petMotion = petSprite.animate([
+    { transform: `translate(${dx}px, ${dy}px)` },
+    { transform: `translate(${dx / 2}px, ${dy / 2 - 8}px)`, offset: .5 },
+    { transform: 'translate(0, 0)' },
+  ], { duration: 280, easing: 'cubic-bezier(.23,1,.32,1)' });
+}
+
+function showChatFact() {
+  const topic = topics[activeTopic].name;
+  let pool = projectNotes.length ? projectNotes : notes;
+  if (topic) pool = projectNotesFor(topic);
+  if (activeTopic === 'resume') pool = notes.filter(note => ['Work', 'About'].includes(note.topic));
+  const avoid = pool.length > 1 ? new Set([chatFact?.question]) : undefined;
+  chatFact = pickNote(pool, avoid);
+  if (!chatFact) return;
+  chatNote.hidden = false;
+  find('[data-scout-chat-text]').textContent = chatFact.text;
+  thread.scrollTop = 0;
+  moveScout(petFinding);
 }
 
 function openGuide(trigger) {
@@ -83,6 +126,8 @@ function openGuide(trigger) {
   panel.show();
   launch.setAttribute('aria-expanded', 'true');
   thread.scrollTop = thread.scrollHeight;
+  scheduleProjectNote();
+  moveScout(petHome);
 }
 
 function selectTopic(key) {
@@ -90,6 +135,8 @@ function selectTopic(key) {
   if (key !== activeTopic) previous = '';
   activeTopic = key;
   const topic = topics[key];
+  if (petFinding.contains(petSprite)) moveScout(petHome);
+  chatNote.hidden = true;
   for (const button of root.querySelectorAll('[data-guide-topic]')) {
     button.setAttribute('aria-pressed', String(button.dataset.guideTopic === key));
   }
@@ -128,9 +175,7 @@ function appendTurn(question) {
     message.className = 'guide-message guide-message-' + role;
     const label = document.createElement('span');
     label.className = 'mono';
-    label.textContent = role === 'user'
-      ? 'YOUR QUESTION / ' + String(turns.children.length + 1).padStart(2, '0')
-      : 'GUIDE’S NOTE';
+    label.textContent = role === 'user' ? 'You' : 'Domi';
     const content = document.createElement('p');
     content.textContent = text;
     message.append(label, content);
@@ -178,6 +223,9 @@ async function ask(question, prior = previous) {
   field.value = '';
   send.textContent = '■';
   send.setAttribute('aria-label', 'Stop reply');
+  panel.dataset.scoutState = 'thinking';
+  moveScout(petCompose);
+  chatNoteAsk.disabled = true;
   setStatus('Looking through the notes…');
   thread.scrollTop = thread.scrollHeight;
 
@@ -190,6 +238,7 @@ async function ask(question, prior = previous) {
     });
     if (!response.ok || !response.body) {
       const data = await response.json().catch(() => ({}));
+      if (response.status === 405) throw new Error('This preview does not have a chat endpoint. Domi’s saved facts are still available under Surprise me.');
       throw new Error(data.error || 'The guide is temporarily unavailable.');
     }
     for await (const line of readLines(response.body)) {
@@ -217,6 +266,9 @@ async function ask(question, prior = previous) {
     setStatus(messageText);
   } finally {
     request = null;
+    panel.dataset.scoutState = 'ready';
+    chatNoteAsk.disabled = false;
+    if (petCompose.contains(petSprite)) moveScout(petHome);
     send.textContent = '↑';
     send.setAttribute('aria-label', 'Send question');
   }
@@ -229,24 +281,36 @@ document.addEventListener('click', event => {
   openGuide(trigger);
 });
 find('[data-guide-close]').addEventListener('click', () => panel.close());
-find('[data-guide-dismiss]').addEventListener('click', () => {
+find('[data-guide-dismiss]').addEventListener('click', event => {
   hideNote();
-  launch.focus({ preventScroll: true });
+  if (event.detail === 0) launch.focus({ preventScroll: true });
 });
-find('[data-guide-note-ask]').addEventListener('click', () => {
+function askAboutNote(note) {
+  if (!note || request) return;
+  const key = note.topic.toLowerCase();
+  selectTopic(Object.hasOwn(topics, key) ? key : 'site');
+  ask(note.question);
+}
+noteAsk.addEventListener('click', () => {
   openGuide(launch);
-  if (currentNote) {
-    const key = currentNote.topic.toLowerCase();
-    selectTopic(Object.hasOwn(topics, key) ? key : 'site');
-    ask(currentNote.question);
-  }
+  askAboutNote(currentNote);
+});
+pet.addEventListener('click', showChatFact);
+field.addEventListener('focus', () => {
+  if (panel.open) moveScout(petCompose);
+});
+chatNoteAsk.addEventListener('click', () => {
+  field.focus({ preventScroll: true });
+  askAboutNote(chatFact);
 });
 for (const button of root.querySelectorAll('[data-guide-topic]')) {
   button.addEventListener('click', () => selectTopic(button.dataset.guideTopic));
 }
 panel.addEventListener('close', () => {
   launch.setAttribute('aria-expanded', 'false');
+  petMotion?.cancel();
   returnFocus?.focus({ preventScroll: true });
+  scheduleProjectNote();
 });
 panel.addEventListener('keydown', event => {
   if (event.key === 'Escape') panel.close();
@@ -283,14 +347,16 @@ try {
     }
   }
 } catch { /* Optional. */ }
-const pageTopic = location.pathname.match(/^\/(?:projects\/)?(letzgo|popin|resume)\//)?.[1];
-selectTopic(pageTopic ?? 'site');
+const pageTopic = projectSlug ?? (location.pathname === '/resume/' ? 'resume' : 'site');
+selectTopic(pageTopic);
 root.hidden = false;
 for (const trigger of document.querySelectorAll('button[data-guide-open][hidden]')) trigger.hidden = false;
 handleHash();
 addEventListener('hashchange', handleHash);
-setTimeout(showNote, 6500);
-setInterval(showNote, 18000);
-new MutationObserver(() => { if (motionPaused()) hideNote(); })
-  .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-reduced.addEventListener('change', () => { if (motionPaused()) hideNote(); });
+startScout({ root, launch, visitor, panel, motionPaused, showNote, hideNote, seen, notes });
+document.addEventListener('visibilitychange', scheduleProjectNote);
+document.addEventListener('motionchange', () => {
+  if (motionPaused()) petMotion?.cancel();
+  scheduleProjectNote();
+});
+scheduleProjectNote();

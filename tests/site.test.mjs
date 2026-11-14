@@ -53,6 +53,20 @@ test('preview rejects malformed paths, traversal, and writes',async()=>{
   assert.equal((await fetch(base+'/',{method:'POST'})).status,405);
 });
 
+test('preview streams guide greetings and reserves chat for POST', async () => {
+  const chat = await fetch(base + '/api/chat', {
+    method: 'POST',
+    headers: { Accept: 'application/x-ndjson', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question: 'Hello' }),
+  });
+  assert.equal(chat.status, 200);
+  assert.match(chat.headers.get('content-type'), /application\/x-ndjson/);
+  assert.match(await chat.text(), /Want to start with LetzGo/);
+  const invalid = await fetch(base + '/api/chat');
+  assert.equal(invalid.status, 405);
+  assert.equal(invalid.headers.get('allow'), 'POST');
+});
+
 test('content preserves project order and qualified ownership',()=>{
   const home=pages.get('index.html')();
   assert.ok(home.indexOf('01 — LETZGO')<home.indexOf('02 — POPIN'));
@@ -62,6 +76,12 @@ test('content preserves project order and qualified ownership',()=>{
   assert.match(home,/I want to build something that matters/);
   assert.equal((home.match(/data-thought="/g)||[]).length,3);
   assert.equal((home.match(/data-thought-select="/g)||[]).length,3);
+});
+
+test('the Popin map is walkable only on the project page', () => {
+  const mapTag = /<figure class="city-scene scene"[^>]+>/;
+  assert.doesNotMatch(pages.get('index.html')().match(mapTag)[0], /data-scout-path/);
+  assert.match(pages.get('projects/popin/index.html')().match(mapTag)[0], /data-scout-path/);
 });
 
 

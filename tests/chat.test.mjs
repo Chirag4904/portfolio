@@ -13,6 +13,22 @@ test('rejects invalid input before calling a provider', async () => {
   assert.equal((await POST(request({ question: 'x'.repeat(9000) }))).status, 413);
 });
 
+test('saved fact questions work without live chat credentials', async () => {
+  const token = process.env.UPSTASH_VECTOR_REST_TOKEN;
+  delete process.env.UPSTASH_VECTOR_REST_TOKEN;
+  try {
+    const incoming = request({ question: 'How did Popin avoid duplicate map queries?' });
+    incoming.headers.set('Accept', 'application/x-ndjson');
+    const response = await POST(incoming);
+    assert.equal(response.status, 200);
+    const [answer, reference] = (await response.text()).trim().split('\n').map(JSON.parse);
+    assert.match(answer.text, /500 concurrent requests/);
+    assert.equal(reference.source.href, '/projects/popin/#discovery');
+  } finally {
+    if (token !== undefined) process.env.UPSTASH_VECTOR_REST_TOKEN = token;
+  }
+});
+
 test('retrieves passages and returns a grounded answer with case study links', async (t) => {
   Object.assign(process.env, {
     UPSTASH_VECTOR_REST_URL: 'https://vector.example',

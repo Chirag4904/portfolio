@@ -12,6 +12,8 @@ npm run dev
 
 Open http://127.0.0.1:4173. The command builds the site and serves it locally. After source edits, run `npm run build` in another terminal and refresh the browser. `PORT=5000 npm run dev` selects another port.
 
+The local server also runs Domi’s `/api/chat` endpoint. Greetings and saved fact questions work without credentials. For live answers, set the four server environment variables listed below. If you keep them in an ignored `.env.local` file, start the server with `node --env-file=.env.local scripts/dev.mjs`.
+
 ```sh
 npm run build
 npm test
