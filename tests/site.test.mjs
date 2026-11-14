@@ -69,8 +69,10 @@ test('résumé is readable without an embedded viewer and retains the original P
   const html=pages.get('resume/index.html')();
   for(const text of ['HERE Technologies','Payatu','LetzGo','Popin','Bennett University']) assert.ok(html.includes(text));
   for(const text of ['70% of queries met the ≥ 0.8 confidence threshold','Full-Stack Intern','200-user Gatling load tests']) assert.ok(html.includes(text));
+  for(const text of ['REST API (Intermediate)','HackerRank','TestDome','c14d158076fc4b14bbb75b929497bdd1']) assert.ok(html.includes(text));
   assert.doesNotMatch(html,/<object/);
   assert.match(html,/href="\/assets\/chirag-aggarwal-resume\.pdf" download=/);
+  assert.match(html,/href="https:\/\/www\.hackerrank\.com\/certificates\/abef2df5048c"/);
 });
 
 
