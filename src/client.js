@@ -3,6 +3,7 @@ const root = document.documentElement;
 root.classList.add('js');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const motionButton = document.querySelector('[data-motion]');
+const soundButton = document.querySelector('[data-sound]');
 let userPaused = false;
 try { userPaused = localStorage.getItem('motion-paused') === 'true'; } catch { /* Storage is optional. */ }
 let paused = userPaused || reduced.matches;
@@ -25,6 +26,29 @@ motionButton.addEventListener('click', () => {
   updateMotion();
 });
 reduced.addEventListener('change', updateMotion);
+
+let soundEnabled = true;
+try { soundEnabled = localStorage.getItem('click-sound') !== 'false'; } catch { /* Storage is optional. */ }
+function updateSoundButton() {
+  soundButton.setAttribute('aria-pressed', String(soundEnabled));
+  soundButton.textContent = soundEnabled ? 'Sound on' : 'Sound off';
+  soundButton.title = soundEnabled ? 'Mute click sounds' : 'Enable click sounds';
+}
+function playClick() {
+  const click = new Audio('/assets/mouse-click.mp3');
+  click.volume = .7;
+  click.play().catch(() => {});
+}
+updateSoundButton();
+soundButton.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  try { localStorage.setItem('click-sound', String(soundEnabled)); } catch { /* Storage is optional. */ }
+  updateSoundButton();
+  if (soundEnabled) playClick();
+});
+document.addEventListener('click', event => {
+  if (soundEnabled && event.detail && !event.target.closest('[data-sound]')) playClick();
+}, { capture:true });
 
 // Every loop stops when its scene is offscreen, the tab is hidden, or motion is paused.
 function loop(element, callback, duration, blocked = () => false) {

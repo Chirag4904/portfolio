@@ -14,7 +14,7 @@ export async function build() {
     await mkdir(dirname(file), {recursive:true});
     await writeFile(file, render());
   }
-  await cp(resolve(projectRoot,'assets'), resolve(outputRoot,'assets'), {recursive:true, filter:path => !path.endsWith('.png') || path.includes('/assets/scout/')});
+  await cp(resolve(projectRoot,'assets'), resolve(outputRoot,'assets'), {recursive:true, filter:path => !path.endsWith('.png') || path.includes('/assets/scout/') || path.endsWith('/assets/cursor.png')});
   await cp(resolve(projectRoot,'src/styles.css'), resolve(outputRoot,'styles.css'));
   await cp(resolve(projectRoot,'src/client.js'), resolve(outputRoot,'client.js'));
   await cp(resolve(projectRoot,'src/experience.css'), resolve(outputRoot,'experience.css'));
