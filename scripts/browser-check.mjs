@@ -50,7 +50,7 @@ try {
  await page.keyboard.press('Enter');
  assert.equal(await page.evaluate(()=>location.hash),'#main');
  const scout=page.getByRole('button',{name:'Ask Domi',exact:true});
- assert.equal(await scout.getByText('Move me with WASD').isVisible(),true);
+ assert.equal(await scout.locator('.scout-legend').count(),1);
  const scoutStart=await scout.boundingBox();
  await page.waitForFunction(x=>Math.abs(document.querySelector('.guide-launch').getBoundingClientRect().x-x)>10,scoutStart.x);
  await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
@@ -58,7 +58,6 @@ try {
  await page.keyboard.down('a');
  await page.waitForFunction(x=>document.querySelector('.guide-launch').getBoundingClientRect().left<x-40,steeringStart.x);
  await page.keyboard.up('a');
- assert.equal(await scout.getByText('Ask Domi').isVisible(),true);
  const turned=await scout.boundingBox();
  await page.keyboard.down('d');
  await page.waitForFunction(x=>document.querySelector('.guide-launch').getBoundingClientRect().left>x+20,turned.x);

@@ -7,17 +7,34 @@
 .guide-launch[data-held]{cursor:grabbing}
 .field-guide .guide-launch[data-steering]:focus-visible{outline:none}
 .scout-sprite{width:65.6px;height:57.6px;background:url('/assets/scout/idle.png') no-repeat 0 0 / 656px 57.6px;pointer-events:none}
-.scout-label{width:max-content;padding:2px 6px;border:1px solid #bb6333;border-radius:999px;background:#fff6e6;color:#693d25;font-size:10px;line-height:1.2;white-space:nowrap;box-shadow:0 3px 8px #60331d18}
+/* Domi's typing bubble: pops up now and then, otherwise nothing sits above Domi. */
+.scout-label{position:relative;display:flex;gap:3px;width:max-content;margin-bottom:6px;padding:6px 8px;border:1px solid #bb6333;border-radius:10px;background:#fff6e6;box-shadow:0 3px 8px #60331d18;opacity:0;transform:translateX(var(--label-shift,0px)) scale(.6);transform-origin:50% 100%;transition:opacity .2s ease,transform .25s cubic-bezier(.3,1.5,.5,1)}
+.scout-label::after{content:"";position:absolute;left:calc(50% - var(--label-shift,0px));bottom:-5px;width:8px;height:8px;border-right:1px solid #bb6333;border-bottom:1px solid #bb6333;background:#fff6e6;transform:translateX(-50%) rotate(45deg)}
+.scout-label i{width:5px;height:5px;border-radius:50%;background:#693d25;opacity:.4}
+.guide-launch[data-typing] .scout-label{opacity:1;transform:translateX(var(--label-shift,0px)) scale(1)}
+.guide-launch[data-typing] .scout-label i{animation:scout-typing 1.1s infinite}
+.guide-launch[data-typing] .scout-label i:nth-child(2){animation-delay:.15s}
+.guide-launch[data-typing] .scout-label i:nth-child(3){animation-delay:.3s}
+@keyframes scout-typing{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-3px);opacity:1}}
+.guide-launch.label-below .scout-label{margin:6px auto 0;transform-origin:50% 0}
+.guide-launch.label-below .scout-label::after{top:-5px;bottom:auto;border:0;border-top:1px solid #bb6333;border-left:1px solid #bb6333}
+/* Hover legend: everything Domi can do. */
+.guide-launch{position:relative}
+.scout-legend{position:absolute;left:50%;bottom:calc(100% + 4px);display:none;flex-direction:column;gap:6px;padding:8px 10px;border-radius:9px;background:#2b1d15;color:#fff6e6;font-size:11px;line-height:1;white-space:nowrap;pointer-events:none;transform:translateX(calc(-50% + var(--label-shift,0px)))}
+.scout-legend>span{display:flex;align-items:center;gap:6px}
+.scout-legend svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.scout-legend kbd{display:grid;place-items:center;min-width:15px;height:15px;margin-right:-3px;padding:0 3px;border:1px solid #fff6e680;border-bottom-width:2px;border-radius:4px;font:700 9px/1 "Courier New",monospace}
+.scout-legend kbd:last-of-type{margin-right:2px}
+.motion-paused .scout-legend .needs-motion{display:none}
+@media(hover:hover) and (pointer:fine){
+  .guide-launch:not([data-held]):is(:hover,:focus-visible) .scout-legend{display:flex}
+  .guide-launch:is(:hover,:focus-visible) .scout-label{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){.scout-label{transition:none}.guide-launch[data-typing] .scout-label i{animation:none;opacity:.8}}
 .guide-launch.label-below{position:relative}
 .guide-launch.label-below .scout-label{position:absolute;inset:calc(100% + 2px) 0 auto;margin-inline:auto}
 .guide-launch.label-hidden .scout-label{visibility:hidden}
 .field-guide:has(.guide-launch.label-below){bottom:max(34px,calc(env(safe-area-inset-bottom) + 22px))}
-.scout-key-label{display:none}
-@media(any-pointer:fine){
-  .js:not(.motion-paused) .guide-launch:not([data-keys-used]) .scout-label{font-size:12px;font-weight:650}
-  .js:not(.motion-paused) .guide-launch:not([data-keys-used]) .scout-ask-label{display:none}
-  .js:not(.motion-paused) .guide-launch:not([data-keys-used]) .scout-key-label{display:inline}
-}
 /* Paw prints are paused.
 [data-scout-discovered]::before{content:"";position:absolute;z-index:2;top:5px;right:5px;width:24px;height:24px;border-radius:50%;pointer-events:none;background:#fff4e4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23944b28'%3E%3Cellipse cx='4' cy='8' rx='1.6' ry='2.3' transform='rotate(-24 4 8)'/%3E%3Cellipse cx='8' cy='5' rx='1.6' ry='2.4'/%3E%3Cellipse cx='12' cy='5' rx='1.6' ry='2.4'/%3E%3Cellipse cx='16' cy='8' rx='1.6' ry='2.3' transform='rotate(24 16 8)'/%3E%3Cpath d='M10 9c-2.5 0-5 3.7-5 5.5 0 1.3 1 2 2.3 2 1 0 1.8-.7 2.7-.7s1.7.7 2.7.7c1.3 0 2.3-.7 2.3-2C15 12.7 12.5 9 10 9Z'/%3E%3C/svg%3E") center/16px no-repeat;box-shadow:0 0 0 1px #bb633375}
 .tool-notes[data-scout-stop]{position:relative}

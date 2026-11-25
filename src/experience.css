@@ -74,4 +74,6 @@
 .eye-pointer-glyph{fill:none;stroke:#0E0F0C;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 html.eye-pointer-on,html.eye-pointer-on *{cursor:none!important}
 html.eye-pointer-on .studio-eye,html.eye-pointer-on .studio-eye *{cursor:pointer!important}
+html.eye-pointer-on .guide-launch,html.eye-pointer-on .guide-launch *{cursor:grab!important}
+html.eye-pointer-on .guide-launch[data-held],html.eye-pointer-on .guide-launch[data-held] *{cursor:grabbing!important}
 @media print{.eye-pointer{display:none}}

@@ -37,7 +37,6 @@ export function startScout({ root, launch, visitor, panel, motionPaused, showNot
     if (keysUsed) return;
     keysUsed = true;
     launch.dataset.keysUsed = '';
-    label.style.transform = '';
     try { sessionStorage.setItem('domi-keys-used', 'true'); } catch { /* Optional. */ }
   }
 
@@ -73,12 +72,10 @@ export function startScout({ root, launch, visitor, panel, motionPaused, showNot
       sprite.style.transform = `scaleX(${direction})`;
     }
     launch.style.transform = `translate3d(${x - home.left - home.width / 2}px, ${feet - floor}px, 0)`;
-    if (!keysUsed) {
-      const edge = label.offsetWidth / 2 + 8;
-      label.style.transform = `translateX(${clamp(x, edge, innerWidth - edge) - x}px)`;
-    }
     const labelWidth = label.offsetWidth;
-    const labelCenter = keysUsed ? x : clamp(x, labelWidth / 2 + 8, innerWidth - labelWidth / 2 - 8);
+    const edge = Math.max(labelWidth, 152) / 2 + 8; // leave room for the hover legend too
+    const labelCenter = clamp(x, edge, innerWidth - edge);
+    launch.style.setProperty('--label-shift', `${labelCenter - x}px`);
     const aboveTop = feet - launch.offsetHeight;
     const nearCopy = copyBounds?.width && aboveTop < copyBounds.bottom && feet > copyBounds.top &&
       labelCenter - labelWidth / 2 < copyBounds.right && labelCenter + labelWidth / 2 > copyBounds.left;
@@ -295,6 +292,20 @@ export function startScout({ root, launch, visitor, panel, motionPaused, showNot
     if (suppressClick && event.detail) event.stopPropagation();
     suppressClick = false;
   });
+
+  // Now and then Domi "types", a quiet hint that it can chat. Nothing else sits above it.
+  function scheduleTyping(delay = 3000 + Math.random() * 3000) {
+    setTimeout(() => {
+      const busy = motionPaused() || document.hidden || panel.open || !visitor.hidden || gesture ||
+        (hover.matches && launch.matches(':hover'));
+      if (!busy) {
+        launch.dataset.typing = '';
+        setTimeout(() => delete launch.dataset.typing, 2600);
+      }
+      scheduleTyping(8000 + Math.random() * 9000);
+    }, delay);
+  }
+  scheduleTyping();
 
   panel.addEventListener('close', sync);
   document.addEventListener('motionchange', sync);

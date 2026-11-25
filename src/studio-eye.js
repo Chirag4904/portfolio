@@ -44,7 +44,7 @@ if (eye) {
 
     const active = Boolean(mouse) && eyeOnScreen && finePointer.matches;
     setClass(root, 'eye-pointer-on', active);
-    setClass(pointer, 'is-visible', active && !overEye); // over the eye, the system hand takes over
+    setClass(pointer, 'is-visible', active && !overEye);
     if (!active || overEye) return;
 
     const turn = Math.atan2(cy - mouse.y, cx - mouse.x); // the line arrow is drawn pointing right (0 rad)
@@ -57,7 +57,8 @@ if (eye) {
   addEventListener('pointermove', (event) => {
     if (event.pointerType !== 'mouse') return;
     mouse = { x: event.clientX, y: event.clientY };
-    overEye = event.target instanceof Node && eye.contains(event.target);
+    // Over the eye or Domi, hand back to the real cursor (a pointer, or Domi's grab hand).
+    overEye = Boolean(event.target instanceof Element && event.target.closest('.studio-eye, .guide-launch'));
     schedule();
   }, { passive: true });
   addEventListener('scroll', schedule, { passive: true });

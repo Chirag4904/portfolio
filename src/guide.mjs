@@ -14,8 +14,8 @@ export const guide = `<aside class="field-guide" data-field-guide hidden aria-la
       <button type="button" class="guide-note-action" data-guide-note-ask>Tell me more <span aria-hidden="true">↗</span></button>
     </section>
   </div>
-  <button type="button" class="guide-launch" data-guide-open aria-haspopup="dialog" aria-controls="portfolio-guide" aria-expanded="false" aria-label="Ask Domi" title="A / D to walk · W to jump · S to drop" aria-keyshortcuts="A D W S">
-    <span class="scout-label" aria-hidden="true"><span class="scout-ask-label">Ask Domi</span><span class="scout-key-label">Move me with WASD</span></span><span class="scout-sprite" aria-hidden="true"></span>
+  <button type="button" class="guide-launch" data-guide-open aria-haspopup="dialog" aria-controls="portfolio-guide" aria-expanded="false" aria-label="Ask Domi" aria-keyshortcuts="A D W S">
+    <span class="scout-legend" aria-hidden="true"><span><svg viewBox="0 0 16 16"><path d="M3.2 2.8h9.6a1.7 1.7 0 0 1 1.7 1.7v5.2a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.9v-2.5H3.2a1.7 1.7 0 0 1-1.7-1.7V4.5a1.7 1.7 0 0 1 1.7-1.7Z"/></svg>Click to chat</span><span class="needs-motion"><svg viewBox="0 0 24 24"><path d="M8 11V7.5a1.5 1.5 0 0 1 3 0V10m0-.5v-3a1.5 1.5 0 0 1 3 0V10m0-2.5a1.5 1.5 0 0 1 3 0V10m0 1.5a1.5 1.5 0 0 1 3 0V16a6 6 0 0 1-6 6h-2 .2a6 6 0 0 1-5-2.7l-.2-.3c-.3-.5-1.4-2.4-3.3-5.7a1.5 1.5 0 0 1 .5-2 1.9 1.9 0 0 1 2.3.3L8 13"/></svg>Drag to throw</span><span class="needs-motion"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>to walk</span></span><span class="scout-label" aria-hidden="true"><i></i><i></i><i></i></span><span class="scout-sprite" aria-hidden="true"></span>
   </button>
   <dialog id="portfolio-guide" class="guide-panel" aria-labelledby="portfolio-guide-title">
     <header class="guide-panel-head">
