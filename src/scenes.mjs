@@ -4,7 +4,7 @@ const point = (x,y,label,solid=false) => `<circle cx="${x}" cy="${y}" r="6" fill
 
 export function routeScene({detail=false}={}) {
   return `<figure class="route-scene scene match-demo" data-matching data-scene data-scout-path>
-    <div class="scene-top mono"><span>ROUTE CORRIDOR / LETZGO</span><span>TRY A PICKUP</span></div><div class="match-toolbar"><span class="hand">drop someone along the way.</span><div><button data-add-passenger aria-pressed="false">+ Passenger</button><button data-reset-passengers>Reset</button></div></div><p class="match-help" id="match-help">Drag a passenger pin. Or focus it and use arrow keys. Everyone is headed to B.</p>
+    <div class="scene-top mono"><span>ROUTE CORRIDOR / LETZGO</span><span>TRY A PICKUP</span></div><div class="match-toolbar"><span class="hand">drop someone along the way.</span><span class="match-count mono" data-match-count aria-hidden="true">3 / 5 pickups</span><div><button data-add-passenger aria-pressed="false">+ Passenger</button><button data-reset-passengers>Reset</button></div></div><p class="match-help" id="match-help">Drag a passenger pin. Or focus it and use arrow keys. Everyone is headed to B.</p><p class="match-cap mono" data-match-cap hidden>Map full — remove a pin or Reset.</p>
     <svg data-match-map viewBox="0 0 720 380" role="group" aria-label="Passenger pickup map; driver travels from A to B" aria-describedby="match-help">
       ${grid('route-grid')}
       <g fill="none" stroke="currentColor" opacity=".14" stroke-width="1"><path d="M0 130H720M0 250H720M160 0V380M375 0V380M590 0V380"/><path d="m0 370 490-370M240 380 480-360M0 20l510 360"/></g>
@@ -18,9 +18,13 @@ export function routeScene({detail=false}={}) {
       <g data-passenger-pins>${initialPassengers.map(p=>`<g class="passenger-pin" data-passenger="${p.id}" transform="translate(${p.x} ${p.y})" tabindex="-1" role="img" aria-label="Passenger ${p.id}, illustrative pickup" aria-describedby="match-help"><circle class="pin-hit" r="28"/><circle class="pin-halo" r="23"/><circle class="pin-body" r="15"/><text text-anchor="middle" y="4">${p.id}</text></g>`).join('')}</g>
     </svg>
     <figcaption><span>Closest pickup ranks first.</span><span class="mono">ILLUSTRATIVE MATCHING · NOT LIVE DATA</span></figcaption>
-    <div class="match-results"><div class="match-results-heading mono"><span>PICKUP RANKING</span><span>DISTANCE FROM ROUTE</span></div><ol data-match-results></ol><p data-match-status role="status" class="match-status">Move a pin to explore the ranking.</p></div>
+    <div class="match-results"><div class="match-results-heading mono"><span>PICKUP RANKING</span><span>DISTANCE FROM ROUTE</span></div><ol data-match-results></ol>
+      <div class="match-tiers" aria-hidden="true"><span class="match-tier" data-tier-band="0"><b>01</b><small><span data-tier-count>0</span> ≤20</small></span><span class="match-tier" data-tier-band="1"><b>02</b><small><span data-tier-count>0</span> ≤40</small></span><span class="match-tier" data-tier-band="2"><b>03</b><small><span data-tier-count>0</span> ≤60</small></span><span class="match-tier" data-tier-band="3"><b>04</b><small><span data-tier-count>0</span> &gt;60</small></span></div>
+      <p class="match-tier-note mono">4-TIER CORRIDOR FILTER · PINS IN 01–03 PASS</p>
+      <p class="match-pass-row"><span class="match-pass" data-match-pass hidden>PASSED · 4-TIER FILTER</span></p>
+      <p data-match-status role="status" class="match-status">Move a pin to explore the ranking.</p></div>
     <p class="match-fallback">The interactive ranking needs JavaScript. The route illustration shows pickups around a shared journey.</p>
-    <details class="match-method"><summary>How this sketch ranks <span>+</span></summary><p>This demo sorts pickups by their shortest straight-line distance to the drawn route, in diagram units. Everyone shares destination B. It does not model roads, travel time, direction, or LetzGo’s production matching rules.</p></details>
+    <details class="match-method"><summary>How this sketch ranks <span>+</span></summary><p>This demo sorts pickups by their shortest straight-line distance to the drawn route, in diagram units. Everyone shares destination B. It does not model roads, travel time, direction, or LetzGo’s production matching rules. The four bands mirror the case study’s corridor tiers; here a 60-unit threshold decides which pins pass.</p></details>
     ${detail?`<div class="tier-line" aria-label="Four classification tiers"><span>01 <i></i></span><span>02 <i></i></span><span>03 <i></i></span><span>04 <i></i></span><b>Road-network queries ↗</b></div><p class="diagram-note">Candidates move through four filtering stages before the remaining routes are evaluated on the road network.</p>`:''}
   </figure>`;
 }

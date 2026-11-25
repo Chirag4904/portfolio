@@ -8,6 +8,10 @@
 .field-guide .guide-launch[data-steering]:focus-visible{outline:none}
 .scout-sprite{width:65.6px;height:57.6px;background:url('/assets/scout/idle.png') no-repeat 0 0 / 656px 57.6px;pointer-events:none}
 .scout-label{width:max-content;padding:2px 6px;border:1px solid #bb6333;border-radius:999px;background:#fff6e6;color:#693d25;font-size:10px;line-height:1.2;white-space:nowrap;box-shadow:0 3px 8px #60331d18}
+.guide-launch.label-below{position:relative}
+.guide-launch.label-below .scout-label{position:absolute;inset:calc(100% + 2px) 0 auto;margin-inline:auto}
+.guide-launch.label-hidden .scout-label{visibility:hidden}
+.field-guide:has(.guide-launch.label-below){bottom:max(34px,calc(env(safe-area-inset-bottom) + 22px))}
 .scout-key-label{display:none}
 @media(any-pointer:fine){
   .js:not(.motion-paused) .guide-launch:not([data-keys-used]) .scout-label{font-size:12px;font-weight:650}
@@ -46,19 +50,19 @@
 .guide-close{color:#754027}
 .guide-desk{display:grid;grid-template-columns:136px minmax(0,1fr);min-height:0}
 .guide-topics{display:flex;flex-direction:column;min-width:0;gap:4px;padding:15px 9px 11px;background:#f8ead7;border-right:1px solid var(--guide-line)}
-.guide-topics>.mono{font-size:9px;letter-spacing:.13em;color:#a05b37;padding:0 7px 6px}
+.guide-topics>.mono{font-size:10px;letter-spacing:.13em;color:#a05b37;padding:0 7px 6px}
 .guide-topics button{display:flex;align-items:center;gap:7px;min-height:38px;padding:7px;border:1px solid transparent;border-radius:10px;background:transparent;color:#684330;text-align:left;font-size:12px;white-space:nowrap}
 .guide-topic-icon{width:15px;height:15px;flex:none;fill:none;stroke:#c16b36;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7}
 .guide-topics button[aria-pressed=true]{background:#fff9ee;color:#552f20;font-weight:720;box-shadow:0 2px 6px #78421a10}
 .guide-reading{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0}
 .guide-tech{grid-row:1;padding:8px 14px 10px;background:#fff4e4;border-bottom:1px solid var(--guide-line)}
-.guide-tech>.mono{color:#a05b37;font-size:9px;letter-spacing:.1em;margin-bottom:4px}
+.guide-tech>.mono{color:#a05b37;font-size:10px;letter-spacing:.1em;margin-bottom:4px}
 .guide-tech>div{display:flex;flex-wrap:wrap;gap:5px}
 .guide-tech button{min-height:33px;padding:4px 8px;border:1px solid #e7c99d;border-radius:999px;background:#fffaf1;color:#8a4c2e;font-size:12px;font-weight:650}
 .guide-conversation{grid-row:2;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;background:var(--guide-paper)}
 .guide-compose{grid-row:3;padding:10px 14px;border-top:1px solid var(--guide-line);background:#fff4e4}
 .guide-chat-note{display:flex;align-items:flex-start;gap:8px;margin:15px 18px 0;padding:9px 11px;border:1px solid #e5bc8f;border-radius:14px;background:#fff1dc}
-.guide-chat-note .mono{color:#ad6137;font-size:9px;letter-spacing:.1em}
+.guide-chat-note .mono{color:#ad6137;font-size:10px;letter-spacing:.1em}
 .guide-chat-note p:not(.mono){margin-top:2px;font-size:13px;font-weight:650;line-height:1.35}
 .guide-chat-note button{min-height:44px;padding:0;border:0;background:transparent;color:#a04b28;font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
 .guide-welcome{padding:26px 26px 20px}
@@ -71,7 +75,7 @@
 .guide-turns:not(:empty){display:grid;gap:9px;padding:12px 24px 18px}
 .guide-turn{display:grid;gap:10px}
 .guide-message{display:grid;gap:4px;overflow-wrap:anywhere}
-.guide-message .mono{font-size:9px;letter-spacing:.105em;color:var(--guide-muted)}
+.guide-message .mono{font-size:10px;letter-spacing:.105em;color:var(--guide-muted)}
 .guide-message p{white-space:pre-wrap}
 .guide-message-user{justify-self:end;max-width:82%;padding:9px 12px;border-radius:15px 15px 3px 15px;background:#f6dfbf}
 .guide-message-user p{font-size:15px;line-height:1.3;font-weight:700;letter-spacing:-.025em}
