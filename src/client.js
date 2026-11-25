@@ -1,6 +1,16 @@
 import './match-demo.js';
+import './studio-eye.js';
 const root = document.documentElement;
 root.classList.add('js');
+const headerElement = document.querySelector('.site-header');
+function syncHeaderHeight() {
+  const height = headerElement ? Math.round(headerElement.getBoundingClientRect().height) : 80;
+  root.style.setProperty('--header-h', `${height}px`);
+}
+syncHeaderHeight();
+addEventListener('resize', syncHeaderHeight, {passive:true});
+addEventListener('load', syncHeaderHeight);
+if (headerElement && 'ResizeObserver' in window) new ResizeObserver(syncHeaderHeight).observe(headerElement);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const motionButton = document.querySelector('[data-motion]');
 const soundButton = document.querySelector('[data-sound]');
@@ -214,7 +224,7 @@ function renderScroll() {
   if(progressBar) progressBar.style.transform = `scaleX(${fullHeight > 0 ? scrollY/fullHeight : 0})`;
   if(journey) {
     const rect = journey.getBoundingClientRect();
-    const top = innerWidth <= 760 ? 107 : 80;
+    const top = Number.parseFloat(getComputedStyle(root).getPropertyValue('--header-h')) || (innerWidth <= 760 ? 112 : 80);
     if((rect.bottom >= 0 && rect.top <= innerHeight) || journeyLinear !== (paused || innerHeight <= 650)) {
       const progress = Math.min(1, Math.max(0, (top-rect.top)/Math.max(1,rect.height-innerHeight+top)));
       showThought(Math.min(2, Math.floor(progress*3)), progress);
@@ -238,7 +248,7 @@ document.addEventListener('motionchange', () => {
 thoughtButtons.forEach((button,index) => button.addEventListener('click', () => {
   // The controls move the native document, so the selected chapter and scroll position agree.
   const rect = journey.getBoundingClientRect();
-  const top = innerWidth <= 760 ? 107 : 80;
+  const top = Number.parseFloat(getComputedStyle(root).getPropertyValue('--header-h')) || (innerWidth <= 760 ? 112 : 80);
   const fraction = (index + .15)/3;
   const destination = scrollY + rect.top - top + fraction * (rect.height-innerHeight+top);
   window.scrollTo({top:destination,behavior:'instant'});

@@ -22,7 +22,9 @@ export function startScout({ root, launch, visitor, panel, motionPaused, showNot
     for (const element of document.querySelectorAll(note.selector)) paths.push({ element, note });
   }
   const header = document.querySelector('.site-header');
-  let x, feet, floor, left, right, ceiling, home;
+  const copy = document.querySelector('.opening-purpose');
+  const topLink = document.querySelector('.site-footer a[href="#main"]');
+  let x, feet, floor, left, right, ceiling, home, copyBounds, topBounds;
   let ground = null, vx = 0, vy = 0, direction = -1;
   let frame, previous, gesture, suppressClick, spriteState;
   const keys = new Set();
@@ -51,6 +53,8 @@ export function startScout({ root, launch, visitor, panel, motionPaused, showNot
     left = 8 + home.width / 2;
     right = innerWidth - left;
     ceiling = Math.min(floor, launch.offsetHeight + Math.max(8, header.getBoundingClientRect().bottom));
+    copyBounds = copy?.getBoundingClientRect();
+    topBounds = topLink?.getBoundingClientRect();
     x = clamp(x ?? home.right - home.width / 2, left, right);
     feet = clamp(feet ?? floor, ceiling, floor);
   }
@@ -73,6 +77,16 @@ export function startScout({ root, launch, visitor, panel, motionPaused, showNot
       const edge = label.offsetWidth / 2 + 8;
       label.style.transform = `translateX(${clamp(x, edge, innerWidth - edge) - x}px)`;
     }
+    const labelWidth = label.offsetWidth;
+    const labelCenter = keysUsed ? x : clamp(x, labelWidth / 2 + 8, innerWidth - labelWidth / 2 - 8);
+    const aboveTop = feet - launch.offsetHeight;
+    const nearCopy = copyBounds?.width && aboveTop < copyBounds.bottom && feet > copyBounds.top &&
+      labelCenter - labelWidth / 2 < copyBounds.right && labelCenter + labelWidth / 2 > copyBounds.left;
+    launch.classList.toggle('label-below', !!nearCopy);
+    const pill = label.getBoundingClientRect();
+    launch.classList.toggle('label-hidden', !!topBounds?.width &&
+      pill.top < topBounds.bottom && pill.bottom > topBounds.top &&
+      pill.left < topBounds.right && pill.right > topBounds.left);
     if (!visitor.hidden) {
       const width = visitor.offsetWidth;
       const bubbleX = clamp(x - width / 2, 12, innerWidth - width - 12);

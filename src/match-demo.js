@@ -10,13 +10,17 @@ document.querySelectorAll('[data-matching]').forEach(demo=>{
   const results=demo.querySelector('[data-match-results]');
   const status=demo.querySelector('[data-match-status]');
   const addButton=demo.querySelector('[data-add-passenger]');
+  const count=demo.querySelector('[data-match-count]');
+  const cap=demo.querySelector('[data-match-cap]');
+  const bands=[...demo.querySelectorAll('[data-tier-band]')];
+  const passStamp=demo.querySelector('[data-match-pass]');
   const route=Array.from({length:181},(_,i)=>{
     const p=path.getPointAtLength(path.getTotalLength()*i/180);
     return {x:p.x,y:p.y};
   });
   let passengers=initialPassengers.map(p=>({...p}));
   let nextID=4, placing=false, drag=null, frame=0;
-  const limit=5;
+  const limit=5, threshold=60, tierCuts=[20,40,60];
   const clamp=(x,y)=>({x:Math.max(24,Math.min(696,x)),y:Math.max(28,Math.min(350,y))});
   function position(event) {
     const matrix=svg.getScreenCTM();
@@ -33,6 +37,20 @@ document.querySelectorAll('[data-matching]').forEach(demo=>{
   function render(announce=false) {
     frame=0;
     const ranked=rankPickups(passengers,route);
+    const full=passengers.length>=limit;
+    const passed=ranked.length>0 && ranked.every(p=>p.distance<=threshold);
+    const tierCounts=[0,0,0,0];
+    for(const pickup of ranked) tierCounts[pickup.distance<=tierCuts[0]?0:pickup.distance<=tierCuts[1]?1:pickup.distance<=tierCuts[2]?2:3]++;
+    if(count) count.textContent=`${passengers.length} / ${limit} pickups`;
+    bands.forEach((band,i)=>{
+      const total=tierCounts[i];
+      band.querySelector('[data-tier-count]').textContent=total;
+      band.classList.toggle('is-filled',total>0);
+      band.classList.toggle('is-outside',i===3 && total>0);
+    });
+    if(passStamp) passStamp.hidden=!passed;
+    if(cap) cap.hidden=!full;
+    addButton.title=full?'Map full — remove a pin or Reset':'Add a passenger pin';
     for(const passenger of passengers) {
       let pin=pins.querySelector(`[data-passenger="${passenger.id}"]`);
       if(!pin) {
@@ -57,8 +75,12 @@ document.querySelectorAll('[data-matching]').forEach(demo=>{
     });
     connectors.innerHTML=ranked.map(p=>`<path d="M${p.x} ${p.y}L${p.nearest.x} ${p.nearest.y}"/><circle cx="${p.nearest.x}" cy="${p.nearest.y}" r="3"/>`).join('');
     results.innerHTML=ranked.map((p,i)=>`<li data-rank-passenger="${p.id}"><span class="match-rank">${String(i+1).padStart(2,'0')}</span><span>Passenger ${p.id}${i===0?' <small>closest</small>':''}</span><span>${Math.round(p.distance)} <small>units</small></span></li>`).join('');
-    addButton.disabled=passengers.length>=limit;
-    if(announce) status.textContent=ranked.length ? `${ranked.map((p,i)=>`${i+1}: passenger ${p.id}`).join(' · ')}. Closest pickup is ${Math.round(ranked[0].distance)} diagram units from the route.` : 'No passengers yet. Add a passenger to begin.';
+    addButton.disabled=full;
+    if(announce) {
+      const summary=ranked.length ? `${ranked.map((p,i)=>`${i+1}: passenger ${p.id}`).join(' · ')}. Closest pickup is ${Math.round(ranked[0].distance)} diagram units from the route.` : 'No passengers yet. Add a passenger to begin.';
+      const passNote=passed ? ` All ${ranked.length} pickups pass the four-tier filter.` : '';
+      status.textContent=(full ? 'Map full — remove a pin or Reset. ' : '')+summary+passNote;
+    }
   }
   function addAt(point) {
     if(!point || passengers.length>=limit) return;
